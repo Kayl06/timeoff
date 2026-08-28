@@ -90,39 +90,39 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| TENANT-01 | — | Pending |
-| TENANT-02 | — | Pending |
-| TENANT-03 | — | Pending |
-| TENANT-04 | — | Pending |
-| TENANT-05 | — | Pending |
-| AUTHZ-01 | — | Pending |
-| AUTHZ-02 | — | Pending |
-| AUTHZ-03 | — | Pending |
-| BAL-01 | — | Pending |
-| BAL-02 | — | Pending |
-| BAL-03 | — | Pending |
-| BAL-04 | — | Pending |
-| BAL-05 | — | Pending |
-| LEAVE-01 | — | Pending |
-| LEAVE-02 | — | Pending |
-| LEAVE-03 | — | Pending |
-| LEAVE-04 | — | Pending |
-| NOTIF-01 | — | Pending |
-| NOTIF-02 | — | Pending |
-| NOTIF-03 | — | Pending |
-| NOTIF-04 | — | Pending |
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| CAL-01 | — | Pending |
-| CAL-02 | — | Pending |
+| TENANT-01 | Phase 1 | Pending |
+| TENANT-02 | Phase 1 | Pending |
+| TENANT-03 | Phase 1 | Pending |
+| TENANT-04 | Phase 2 | Pending |
+| TENANT-05 | Phase 1 | Pending |
+| AUTHZ-01 | Phase 2 | Pending |
+| AUTHZ-02 | Phase 2 | Pending |
+| AUTHZ-03 | Phase 2 | Pending |
+| BAL-01 | Phase 3 | Pending |
+| BAL-02 | Phase 3 | Pending |
+| BAL-03 | Phase 4 | Pending |
+| BAL-04 | Phase 4 | Pending |
+| BAL-05 | Phase 5 | Pending |
+| LEAVE-01 | Phase 4 | Pending |
+| LEAVE-02 | Phase 4 | Pending |
+| LEAVE-03 | Phase 4 | Pending |
+| LEAVE-04 | Phase 5 | Pending |
+| NOTIF-01 | Phase 4 | Pending |
+| NOTIF-02 | Phase 4 | Pending |
+| NOTIF-03 | Phase 4 | Pending |
+| NOTIF-04 | Phase 4 | Pending |
+| AUTH-01 | Phase 6 | Pending |
+| AUTH-02 | Phase 6 | Pending |
+| AUTH-03 | Phase 6 | Pending |
+| AUTH-04 | Phase 6 | Pending |
+| CAL-01 | Phase 7 | Pending |
+| CAL-02 | Phase 7 | Pending |
 
 **Coverage:**
 - v1 requirements: 27 total
-- Mapped to phases: 0
-- Unmapped: 27 ⚠️ (filled by roadmap)
+- Mapped to phases: 27
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-08-29*
-*Last updated: 2026-08-29 after initial definition*
+*Last updated: 2026-08-29 after roadmap creation*
