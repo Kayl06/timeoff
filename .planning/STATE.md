@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Company Signup and Invites
 status: executing
-stopped_at: Completed 01-08-PLAN.md
-last_updated: "2026-08-29T11:31:09.477Z"
+stopped_at: Completed 01-09-PLAN.md
+last_updated: "2026-08-29T11:36:18.919Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 01 execution started
-state_head: 9ed578391691b881c315c0568ef80b84193100d2
+state_head: 54adc619af8e05a179c7a446d543ab8196ba671d
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
   percent: 0
 ---
 
@@ -66,6 +66,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-company-signup-and-invites P06 | 2 min | 2 tasks | 4 files |
 | Phase 01-company-signup-and-invites P07 | 2 min | 2 tasks | 4 files |
 | Phase 01-company-signup-and-invites P08 | 2 min | 2 tasks | 4 files |
+| Phase 01-company-signup-and-invites P09 | 3 min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Preview users lookup is email-only after usability; select id so company_id never enters JSON
 - [Phase 01]: Reused EMAIL_EXISTS_ERROR from invite-auth; 409 never leaks other company identity
 - [Phase 01]: Credentials accept 409 (not mismatch) sets exists; sonner toast without a second Toaster
+- [Phase 01]: Credentials and Google join share accept_invite_with_employee; Google passes passwordHash null
+- [Phase 01]: Other-company Google and unique-violation 23505 redirect to ACCOUNT_EXISTS_PATH with Sign in, not InviteRequired
+- [Phase 01]: Same-company existing Google member still marks the invite accepted and returns true (no second users row)
 
 ### Pending Todos
 
@@ -118,6 +122,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T11:31:09.316Z
-Stopped at: Completed 01-08-PLAN.md
+Last session: 2026-08-29T11:36:18.688Z
+Stopped at: Completed 01-09-PLAN.md
 Resume file: None
