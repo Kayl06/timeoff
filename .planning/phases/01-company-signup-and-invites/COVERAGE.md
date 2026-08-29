@@ -6,9 +6,9 @@
 
 Phase 1 uses Google only as an OAuth **sign-in** provider (OpenID Connect profile/email). No other Google API is called.
 
-| Surface | Decision | Reason |
-|---------|----------|--------|
-| Google OAuth 2.0 / OpenID sign-in (`GoogleProvider`, callback `/api/auth/callback/google`) | INTEGRATE | TENANT-01 Google create-company (pending company cookie) and TENANT-03/TENANT-05 Google join-or-deny. Already in the app. |
+| capability | decision | reason |
+|---|---|---|
+| Google OAuth / OpenID sign-in | INTEGRATE | TENANT-01 create-company and TENANT-03/05 join-or-deny via existing GoogleProvider |
 | Gmail API | OPT-OUT | No mailer this phase; invites are copy-link only. |
 | Google Calendar API | OPT-OUT | Calendars in this product are in-app leave calendars (Phase 7); not Google Calendar. |
 | Google Drive API | OPT-OUT | No attachment storage milestone; `attachments` are unused text arrays. |

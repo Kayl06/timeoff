@@ -13,7 +13,7 @@ This brownfield milestone makes the existing leave app truthful for **client com
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Company Signup and Invites** - First user creates an org; later people join only that company by invite; Google cannot dump into a global pool
+- [x] **Phase 1: Company Signup and Invites** - First user creates an org; later people join only that company by invite; Google cannot dump into a global pool (completed 2026-08-29)
 - [ ] **Phase 2: Tenant Isolation and Server Authz** - Company A cannot see Company B; mutations run on the server with a session; the public anon key cannot operate alone
 - [ ] **Phase 3: Live Remaining Days** - Dashboard remaining days come from `leave_balances`; first and invited users get default rows
 - [ ] **Phase 4: Approve Reject Cancel Side Effects** - Single approve/reject/cancel deducts or restores days, writes durable audit, and notifies in-app and by email
@@ -170,7 +170,7 @@ Phase 6 depends only on Phase 2 (authz + tenant exist; remaining-days and leave 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Company Signup and Invites | 9/9 | In Progress|  |
+| 1. Company Signup and Invites | 9/9 | Complete    | 2026-08-29 |
 | 2. Tenant Isolation and Server Authz | 0/TBD | Not started | - |
 | 3. Live Remaining Days | 0/TBD | Not started | - |
 | 4. Approve Reject Cancel Side Effects | 0/TBD | Not started | - |
