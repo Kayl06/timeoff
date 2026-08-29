@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Company Signup and Invites
 status: verifying
-stopped_at: Phase 1 UAT partial — Google OAuth still blocked
-last_updated: "2026-08-29T12:03:00Z"
+stopped_at: Phase 1 security verified — threats_open 0
+last_updated: "2026-08-29T12:15:00Z"
 last_activity: 2026-08-29
-last_activity_desc: UAT retest passed Tests 1 and 4; Test 2 Google OAuth remains blocked
+last_activity_desc: UAT 5/5 pass; 01-SECURITY.md SECURED (threats_open 0)
 state_head: 54adc619af8e05a179c7a446d543ab8196ba671d
 progress:
   total_phases: 7
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 
 Phase: 01 (Company Signup and Invites) — VERIFYING
 Plan: 9 of 9
-Status: UAT partial — 4 passed, 1 blocked (Google OAuth)
-Last activity: 2026-08-29 — Retest of G-01-1 and G-01-4 passed
+Status: UAT complete (5/5); security SECURED (threats_open 0)
+Last activity: 2026-08-29 — Phase 1 threat verification written to 01-SECURITY.md
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -122,6 +122,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T11:51:00Z
-Stopped at: Phase 1 UAT retest — Test 4 accept invite after G-01-4 fix
-Resume file: .planning/phases/01-company-signup-and-invites/01-UAT.md
+Last session: 2026-08-29T12:15:00Z
+Stopped at: Phase 1 security verified (threats_open 0) — next /gsd-validate-phase 01
+Resume file: .planning/phases/01-company-signup-and-invites/01-SECURITY.md
