@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 03
 current_phase_name: Live Remaining Days
 status: executing
-stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-08-29T17:05:58.960Z"
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-08-29T17:09:46.752Z"
 last_activity: 2026-08-30
 last_activity_desc: Phase 03 execution started
-state_head: 2db756b204139828fcbba91567f6c97bc7fd4ef6
+state_head: 0db7694c13379996b19316ca8de03a819e2a7545
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
   percent: 29
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 03 (Live Remaining Days) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-08-30 — Phase 03 execution started
 
@@ -76,6 +76,7 @@ Progress: [███░░░░░░░] 29%
 | Phase 02-tenant-isolation-and-server-authz P06 | 5 min | 3 tasks | 2 files |
 | Phase 03-live-remaining-days P01 | 3 min | 2 tasks | 6 files |
 | Phase 03-live-remaining-days P02 | 2 min | 2 tasks | 5 files |
+| Phase 03-live-remaining-days P03 | 2 min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -138,6 +139,9 @@ Recent decisions affecting current work:
 - [Phase 03]: GET self-heal inserts only session.user.id for the current calendar year
 - [Phase 03]: Duplicate unique (user_id, leave_type, year) is continue then re-select, never UPDATE used_days
 - [Phase 03]: Leave Balance card maps leaveBalance through balancesForLeaveCard and renders remaining_days
+- [Phase 03]: INSERT reads leave_policies.default_allowance at insert time; never hardcoded 20/10/5
+- [Phase 03]: DISTINCT ON (leave_type) ORDER BY leave_type, name when multiple active policies share a type
+- [Phase 03]: Skip a type when no active policy row exists
 
 ### Pending Todos
 
@@ -158,6 +162,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T17:05:58.474Z
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-08-29T17:09:38.086Z
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None

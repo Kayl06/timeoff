@@ -24,7 +24,7 @@ Requirements for this milestone. Shipped UI (dashboard shell, request form, appr
 ### Balances
 
 - [ ] **BAL-01**: Dashboard remaining days come from the user’s `leave_balances` rows (no mock card)
-- [ ] **BAL-02**: First user and invited users get default `leave_balances` so remaining days are not empty
+- [x] **BAL-02**: First user and invited users get default `leave_balances` so remaining days are not empty
 - [ ] **BAL-03**: Approving a request deducts `total_days` from the matching balance row (user, type, year)
 - [ ] **BAL-04**: Reject does not deduct; cancel of an approved request restores deducted days
 - [ ] **BAL-05**: Bulk approve/reject applies the same balance updates as single approve/reject
@@ -99,7 +99,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | AUTHZ-02 | Phase 2 | Complete |
 | AUTHZ-03 | Phase 2 | Complete |
 | BAL-01 | Phase 3 | Pending |
-| BAL-02 | Phase 3 | Pending |
+| BAL-02 | Phase 3 | Complete |
 | BAL-03 | Phase 4 | Pending |
 | BAL-04 | Phase 4 | Pending |
 | BAL-05 | Phase 5 | Pending |
