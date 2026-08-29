@@ -18,6 +18,10 @@ interface EnvironmentConfig {
   // OAuth Configuration (optional in development)
   GOOGLE_CLIENT_ID?: string
   GOOGLE_CLIENT_SECRET?: string
+
+  // Resend (optional even in production — D-13, D-15)
+  RESEND_API_KEY?: string
+  EMAIL_FROM?: string
   
   // Application Configuration
   NODE_ENV: 'development' | 'production' | 'test'
@@ -44,6 +48,9 @@ function validateEnvironment(): EnvironmentConfig {
     'GOOGLE_CLIENT_SECRET'
   ] as const
 
+  // Always optional — names only; never required (D-15)
+  const optionalMailVars = ['RESEND_API_KEY', 'EMAIL_FROM'] as const
+
   const missingVars: string[] = []
   const config: Partial<EnvironmentConfig> = {}
 
@@ -67,6 +74,13 @@ function validateEnvironment(): EnvironmentConfig {
       config[varName] = value
     } else if (config.NODE_ENV === 'production') {
       missingVars.push(varName)
+    }
+  }
+
+  for (const varName of optionalMailVars) {
+    const value = process.env[varName]
+    if (value && value.trim() !== '') {
+      config[varName] = value
     }
   }
 
