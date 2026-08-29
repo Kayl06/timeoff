@@ -1,9 +1,9 @@
 ---
-status: partial
+status: diagnosed
 phase: 01-company-signup-and-invites
 source: [01-VERIFICATION.md]
 started: 2026-08-29T09:40:00Z
-updated: 2026-08-29T10:41:00Z
+updated: 2026-08-29T10:50:00Z
 ---
 
 ## Current Test
@@ -55,10 +55,21 @@ blocked: 1
   reason: "User reported: No error message when password not meet the Verification"
   severity: major
   test: 1
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "Signup client treats passwords as valid at 8 characters with advisory-only complexity, while the API passwordSchema requires 12 plus composition; 400 responses put messages in details which the page never maps to field errors; toasts use react-hot-toast whose Toaster is unmounted (only Sonner is mounted), so rejection is invisible."
+  artifacts:
+    - path: "apps/web/src/app/auth/signup/page.tsx"
+      issue: "Client min length 8; composition does not block submit; 400 details unused; toasts via unmounted react-hot-toast"
+    - path: "apps/web/src/lib/validation.ts"
+      issue: "API source of truth is minLength 12 plus complexity"
+    - path: "apps/web/src/app/api/auth/signup/route.ts"
+      issue: "Returns generic error plus field details the UI never shows"
+    - path: "apps/web/src/providers/session-provider.tsx"
+      issue: "react-hot-toast Toaster commented out; only Sonner mounted"
+  missing:
+    - "Align signup client checks and checklist with PASSWORD_REQUIREMENTS / passwordSchema (length 12 + composition)"
+    - "Map 400 details onto errors.* field messages"
+    - "Switch signup toasts to Sonner (or remount react-hot-toast)"
+  debug_session: ".planning/debug/signup-password-validation-feedback.md"
 
 - gap_id: G-01-4
   truth: "Join {company name}; credentials join lands on dashboard. Invalid token: This invite is invalid or has expired. Ask your admin to send a new invite. Wrong Google: This invite was sent to a different email...."
@@ -66,7 +77,25 @@ blocked: 1
   reason: "User reported: Need verification if invited email already exists"
   severity: major
   test: 4
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "POST /api/auth/invites 409s only when the email is already a users row in the owner's company or has a pending invite for that company. users.email is globally UNIQUE, so an email with an account elsewhere still gets 201 and a copy-link. Preview never checks users, so accept-invite still shows Join {company}. Credentials accept then 409s globally after submit. Google other-company / 23505 goes to Invite required. Insert user then invite-status update is not atomic."
+  artifacts:
+    - path: "apps/web/src/app/api/auth/invites/route.ts"
+      issue: "Existing-user 409 is same-company only; cross-tenant emails get 201"
+    - path: "apps/web/src/app/api/auth/invites/preview/route.ts"
+      issue: "No users check; join form always shown for a usable token"
+    - path: "apps/web/src/app/api/auth/invites/accept/route.ts"
+      issue: "Global 409 after submit; insert + accept update not in one transaction"
+    - path: "apps/web/src/app/auth/accept-invite/page.tsx"
+      issue: "409 is toast-only; no load-time existing-account card"
+    - path: "apps/web/src/lib/auth.ts"
+      issue: "Google other-company / 23505 → Invite required; same non-atomic insert/update"
+    - path: "apps/web/src/components/invite-teammates-dialog.tsx"
+      issue: "409 copy assumes same-company member"
+    - path: "packages/database/migrations/001_initial_schema.sql"
+      issue: "Global unique email makes a 201 cross-tenant invite unredeemable"
+  missing:
+    - "409 invite create on any existing users.email with distinct copy if they are in another company"
+    - "Preview should surface existing-account before the join form"
+    - "Map Google other-company / unique-violation to the same copy and sign-in, not Invite required"
+    - "Perform user insert + invite accept in one RPC or roll back the user if the status update fails"
+  debug_session: ".planning/debug/invite-existing-email.md"
