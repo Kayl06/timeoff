@@ -11,9 +11,9 @@ Requirements for this milestone. Shipped UI (dashboard shell, request form, appr
 
 - [x] **TENANT-01**: First user can create a company at signup and owns that org
 - [x] **TENANT-02**: That user can invite people by email into only their company
-- [ ] **TENANT-03**: Invitee joins that company and cannot see any other company
+- [x] **TENANT-03**: Invitee joins that company and cannot see any other company
 - [ ] **TENANT-04**: Company A cannot read or change Company B’s people, requests, balances, calendars, notifications, or audit
-- [ ] **TENANT-05**: Google sign-in does not place a user in the wrong company or a global pool
+- [x] **TENANT-05**: Google sign-in does not place a user in the wrong company or a global pool
 
 ### Authorization
 
@@ -92,9 +92,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | TENANT-01 | Phase 1 | Complete |
 | TENANT-02 | Phase 1 | Complete |
-| TENANT-03 | Phase 1 | Pending |
+| TENANT-03 | Phase 1 | Complete |
 | TENANT-04 | Phase 2 | Pending |
-| TENANT-05 | Phase 1 | Pending |
+| TENANT-05 | Phase 1 | Complete |
 | AUTHZ-01 | Phase 2 | Pending |
 | AUTHZ-02 | Phase 2 | Pending |
 | AUTHZ-03 | Phase 2 | Pending |

@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 current_phase: 1
 current_phase_name: Company Signup and Invites
-status: executing
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-08-29T09:27:29.239Z"
+status: verifying
+stopped_at: Completed 01-05-PLAN.md
+last_updated: "2026-08-29T09:33:13.556Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 1 execution started
-state_head: 8bc921ebc0fdc130dfb13e83a42de91c2820f215
+state_head: a238c7d14761eb2560035e9c378fa435c19448a4
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 5
-  completed_plans: 4
+  completed_plans: 5
   percent: 0
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 
 Phase: 1 (Company Signup and Invites) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-29 — Phase 1 execution started
 
 Progress: [░░░░░░░░░░] 0%
@@ -62,6 +62,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P02 | 17 min | 3 tasks | 11 files |
 | Phase 01 P03 | 4 min | 3 tasks | 11 files |
 | Phase 01-company-signup-and-invites P04 | 4 min | 3 tasks | 8 files |
+| Phase 01-company-signup-and-invites P05 | 4 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -82,6 +83,9 @@ Recent decisions affecting current work:
 - [Phase 1]: Pending Google context uses Next 14 sync cookies(); company name never in OAuth state or authorizationParams
 - [Phase 1]: Invite writes stay on supabase in the route; IDatabaseService unchanged
 - [Phase 1]: invite-auth.ts imports ./company-owner.ts so Node 26 tests resolve the leaf module
+- [Phase 1]: Accept/preview writes and reads use supabase in the route; IDatabaseService unchanged
+- [Phase 1]: Google invite bind runs in auth.ts signIn after decideGoogleSignIn allows pendingInvite
+- [Phase 1]: Credentials and Google inserts set users.email from invite.email only
 
 ### Pending Todos
 
@@ -102,6 +106,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T09:27:29.227Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-08-29T09:33:13.542Z
+Stopped at: Completed 01-05-PLAN.md
 Resume file: None
