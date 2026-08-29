@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 1
 current_phase_name: Company Signup and Invites
 status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-08-29T09:21:36.298Z"
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-08-29T09:27:29.239Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 1 execution started
-state_head: 45f0d5a13e45e5ef8c57f474511499e6b860880d
+state_head: 8bc921ebc0fdc130dfb13e83a42de91c2820f215
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 1 (Company Signup and Invites) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 1 execution started
 
@@ -61,6 +61,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-company-signup-and-invites P01 | 2 min | 3 tasks | 7 files |
 | Phase 01 P02 | 17 min | 3 tasks | 11 files |
 | Phase 01 P03 | 4 min | 3 tasks | 11 files |
+| Phase 01-company-signup-and-invites P04 | 4 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Applied companies schema to local Supabase; hosted project still needs database password to link and push
 - [Phase 1]: Deny-until-01-05: unknown Google with pending invite cookie returns InviteRequired (no global employee insert)
 - [Phase 1]: Pending Google context uses Next 14 sync cookies(); company name never in OAuth state or authorizationParams
+- [Phase 1]: Invite writes stay on supabase in the route; IDatabaseService unchanged
+- [Phase 1]: invite-auth.ts imports ./company-owner.ts so Node 26 tests resolve the leaf module
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T09:21:36.286Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-08-29T09:27:29.227Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
