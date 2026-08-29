@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useDatabaseService } from '@/providers/database-provider'
 import { User, LeaveRequest, LeaveBalance, Notification } from '@timeoff/types'
 import { calculateTotalDays } from '@/lib/date-utils'
 import { 
@@ -11,6 +10,15 @@ import {
   adaptNotifications
 } from '@/lib/type-adapters'
 import { toast } from 'sonner'
+
+async function fetchSessionJson<T>(url: string, fallbackError: string): Promise<T> {
+  const response = await fetch(url, { credentials: 'include' })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(payload.error || fallbackError)
+  }
+  return payload as T
+}
 
 interface DashboardDataReturn {
   leaveBalance: LeaveBalance[]
@@ -44,7 +52,6 @@ interface DashboardDataReturn {
 }
 
 export function useDashboardData(user: User): DashboardDataReturn {
-  const databaseService = useDatabaseService()
   const queryClient = useQueryClient()
 
   // Role-based flags
@@ -54,42 +61,60 @@ export function useDashboardData(user: User): DashboardDataReturn {
   // Fetch user's leave balance
   const { data: leaveBalance, isLoading: balanceLoading } = useQuery({
     queryKey: ['leaveBalance', user.id],
-    queryFn: () => databaseService.getLeaveBalance(user.id, new Date().getFullYear()),
+    queryFn: () => fetchSessionJson<DatabaseLeaveBalance[]>(
+      '/api/leave-balances',
+      'Failed to load leave balances'
+    ),
     enabled: !!user?.id
   })
 
-  // Fetch user's recent requests
+  // Fetch user's recent requests (scope=own so managers still see their own list)
   const { data: recentRequests, isLoading: requestsLoading } = useQuery({
     queryKey: ['recentRequests', user.id],
-    queryFn: () => databaseService.getLeaveRequestsByUser(user.id),
+    queryFn: () => fetchSessionJson<DatabaseLeaveRequest[]>(
+      '/api/leave-requests?scope=own',
+      'Failed to load leave requests'
+    ),
     enabled: !!user?.id
   })
 
   // Fetch team data for managers
   const { data: teamRequests, isLoading: teamRequestsLoading } = useQuery({
     queryKey: ['teamLeaveRequests', user.id],
-    queryFn: () => isManager ? databaseService.getTeamLeaveRequests(user.id, user.department) : Promise.resolve([]),
+    queryFn: () => fetchSessionJson<DatabaseLeaveRequest[]>(
+      '/api/leave-requests?scope=team',
+      'Failed to load team leave requests'
+    ),
     enabled: isManager && !!user?.id
   })
 
   // Fetch team stats for managers
   const { data: teamStats, isLoading: teamStatsLoading } = useQuery({
     queryKey: ['teamStats', user.id],
-    queryFn: () => isManager ? databaseService.getManagerTeamStats(user.id) : Promise.resolve(null),
+    queryFn: () => fetchSessionJson(
+      '/api/manager-team-stats',
+      'Failed to load team stats'
+    ),
     enabled: isManager && !!user?.id
   })
 
   // Fetch all requests for admins/HR
   const { data: allRequests, isLoading: allRequestsLoading } = useQuery({
     queryKey: ['allLeaveRequests'],
-    queryFn: () => isAdminOrHR ? databaseService.getAllLeaveRequests() : Promise.resolve([]),
+    queryFn: () => fetchSessionJson<DatabaseLeaveRequest[]>(
+      '/api/leave-requests?scope=all',
+      'Failed to load leave requests'
+    ),
     enabled: isAdminOrHR && !!user?.id
   })
 
   // Fetch notifications
   const { data: notifications, isLoading: notificationsLoading } = useQuery({
     queryKey: ['notifications', user.id],
-    queryFn: () => databaseService.getNotificationsByUser(user.id, 5),
+    queryFn: () => fetchSessionJson<DatabaseNotification[]>(
+      '/api/notifications',
+      'Failed to load notifications'
+    ),
     enabled: !!user?.id
   })
 

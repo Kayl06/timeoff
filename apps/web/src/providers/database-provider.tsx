@@ -1,8 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, ReactNode } from 'react'
-import { IDatabaseService, createDatabaseService } from '@timeoff/database'
-import { supabase } from '@/lib/supabase'
+import { IDatabaseService } from '@timeoff/database'
 
 // Database service context
 const DatabaseServiceContext = createContext<IDatabaseService | null>(null)
@@ -15,14 +14,15 @@ interface DatabaseServiceProviderProps {
 
 /**
  * Database Service Provider
- * Provides database service instance through React context for dependency injection
+ * Provides database service instance through React context for dependency injection.
+ * Omitting `service` yields null so useDatabaseService throws — domain reads go
+ * through session-gated BFF routes, not a browser anon IDatabaseService.
  */
 export function DatabaseServiceProvider({
   children,
   service
 }: DatabaseServiceProviderProps) {
-  // Create default service if none provided (useful for testing)
-  const databaseService = service || createDatabaseService(supabase)
+  const databaseService = service ?? null
 
   return (
     <DatabaseServiceContext.Provider value={databaseService}>
