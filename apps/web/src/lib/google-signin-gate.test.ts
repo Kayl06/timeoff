@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import {
+  ACCOUNT_EXISTS_PATH,
   decideGoogleSignIn,
   INVITE_REQUIRED_PATH,
 } from './google-signin-gate.ts'
@@ -8,6 +9,12 @@ import {
 describe('INVITE_REQUIRED_PATH', () => {
   it('equals /auth/error?error=InviteRequired', () => {
     assert.equal(INVITE_REQUIRED_PATH, '/auth/error?error=InviteRequired')
+  })
+})
+
+describe('ACCOUNT_EXISTS_PATH', () => {
+  it('equals /auth/error?error=AccountExists', () => {
+    assert.equal(ACCOUNT_EXISTS_PATH, '/auth/error?error=AccountExists')
   })
 })
 
