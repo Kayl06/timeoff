@@ -118,7 +118,22 @@ Plans:
   1. Dashboard remaining days show the signed-in user’s `leave_balances` rows (not mock 5/10 cards)
   2. The first user of a new company and invited users have default `leave_balances` so remaining days are not empty
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — Wave 0 seed planner + card-order unit tests
+
+**Wave 2** *(03-02 and 03-03 parallel after 03-01)*
+
+- [ ] 03-02-PLAN.md — GET self-heal tracer + live remaining_days bind
+- [ ] 03-03-PLAN.md — RPC seed in both onboarding functions + local schema push
+
+**Wave 3** *(blocked on 03-02)*
+
+- [ ] 03-04-PLAN.md — Empty/error/partial/order per UI-SPEC
+
 **UI hint**: yes
 
 ### Phase 4: Approve Reject Cancel Side Effects
@@ -192,7 +207,7 @@ Phase 6 depends only on Phase 2 (authz + tenant exist; remaining-days and leave 
 |-------|----------------|--------|-----------|
 | 1. Company Signup and Invites | 9/9 | Complete    | 2026-08-29 |
 | 2. Tenant Isolation and Server Authz | 7/7 | In Progress|  |
-| 3. Live Remaining Days | 0/TBD | Not started | - |
+| 3. Live Remaining Days | 0/4 | Not started | - |
 | 4. Approve Reject Cancel Side Effects | 0/TBD | Not started | - |
 | 5. Bulk Approve Parity | 0/TBD | Not started | - |
 | 6. Honest Password Reset and Sign-in | 0/TBD | Not started | - |
