@@ -85,7 +85,7 @@ Plans:
   2. Requesting, approving, or updating leave as a signed-in user still works; those writes are bound to the signed-in session, not the browser anon key
   3. Someone holding only the public API key, without a valid tenant session, cannot read or write leave, user, or notification data
 
-**Plans**: 6 plans
+**Plans**: 7 plans
 
 Plans:
 **Wave 1**
@@ -96,11 +96,12 @@ Plans:
 
 - [ ] 02-02-PLAN.md — Session-gated create-leave tracer (BFF + request-scoped tenant client)
 
-**Wave 3** *(blocked on Wave 2; 02-03, 02-04, and 02-05 parallel)*
+**Wave 3** *(blocked on Wave 2; 02-03, 02-04, 02-05, and 02-07 parallel)*
 
 - [ ] 02-03-PLAN.md — Session-gated approve/reject/cancel/delete/bulk
-- [ ] 02-04-PLAN.md — Session-gated dashboard/calendar reads + stop browser domain client
+- [ ] 02-04-PLAN.md — Session-gated dashboard/calendar GET routes
 - [ ] 02-05-PLAN.md — Service-role identity client + close test-connection listing
+- [ ] 02-07-PLAN.md — Dashboard/calendar fetch swap + stop browser domain client
 
 **Wave 4** *(blocked on Wave 3 completion)*
 

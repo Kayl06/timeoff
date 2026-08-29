@@ -2,7 +2,7 @@
 
 **Mapped:** 2026-08-29
 **Files analyzed:** 39
-**Analogs found:** 38 / 39
+**Analogs found:** 39 / 39
 
 No CONTEXT.md (discuss-phase skipped). File list taken from `02-RESEARCH.md` recommended structure, brownfield inventory, and implied identity-client swaps.
 
@@ -22,6 +22,7 @@ No CONTEXT.md (discuss-phase skipped). File list taken from `02-RESEARCH.md` rec
 | `apps/web/src/app/api/notifications/route.ts` | route | CRUD | `apps/web/src/app/api/auth/invites/route.ts` | role-match |
 | `apps/web/src/app/api/calendar/leave-requests/route.ts` | route | CRUD | `apps/web/src/app/api/auth/invites/route.ts` GET | role-match |
 | `apps/web/src/app/api/leave-policies/route.ts` | route | request-response | `apps/web/src/app/api/auth/invites/route.ts` GET | role-match |
+| `apps/web/src/app/api/manager-team-stats/route.ts` | route | request-response | `apps/web/src/app/api/auth/invites/route.ts` GET | role-match |
 | `apps/web/src/app/api/test-connection/route.ts` | route | request-response | same file (session-gate in place) | exact |
 | `apps/web/src/lib/require-tenant-session.test.ts` | test | request-response | `apps/web/src/lib/invite-auth.test.ts` | exact |
 | `apps/web/src/lib/supabase-jwt.test.ts` | test | transform | `apps/web/src/lib/invite-token.test.ts` | exact |
@@ -216,6 +217,7 @@ export function buildCreateCompanyWithOwnerArgs(
 - `apps/web/src/app/api/notifications/route.ts` (GET, optional PATCH read)
 - `apps/web/src/app/api/calendar/leave-requests/route.ts` (GET)
 - `apps/web/src/app/api/leave-policies/route.ts` (GET)
+- `apps/web/src/app/api/manager-team-stats/route.ts` (GET; 403 if session.user.role is employee)
 
 **Analog:** `apps/web/src/app/api/auth/invites/route.ts` — the only session-gated BFF in the repo. There is **no** existing `app/api/**/[id]/route.ts`; copy the same handler skeleton and add Next 14 `params` as `{ params }: { params: { id: string } }` (sync, not Promise).
 
@@ -595,7 +597,7 @@ export function validateInput<T>(
 
 **Source:** `apps/web/src/app/api/auth/invites/route.ts` lines 23–28 + `getServerSession` from `next-auth/next`
 
-**Apply to:** every new `/api/leave-*`, `/api/notifications`, `/api/calendar/*` handler, and `test-connection` if it still returns rows.
+**Apply to:** every new `/api/leave-*`, `/api/notifications`, `/api/calendar/*`, `/api/manager-team-stats` handler, and `test-connection` if it still returns rows.
 
 ```typescript
 const session = await getServerSession(authOptions)
@@ -681,7 +683,7 @@ Do not add `owner` to `users.role` CHECK.
 |------|------|-----------|--------|
 | `supabase/tests/tenant_rls.test.sql` | test | request-response | No `supabase/tests/*.sql` and no pgTAP fixtures in-repo. Follow official `supabase test db` RLS allow/deny (RESEARCH Validation Architecture). JWT minting uses RESEARCH `jose` snippet; closest file shape is `invite-token.ts`, not a JWT analog. |
 
-Planner should use RESEARCH Pattern 3 SQL + Wave 0 pgTAP: anon deny; company A JWT cannot SELECT company B leave/users/notifications/audit/balances/calendar/invites/companies.
+Planner should use RESEARCH Pattern 3 SQL + Wave 0 pgTAP in 02-06: anon deny; company A JWT cannot SELECT, INSERT, UPDATE, or DELETE company B leave/users/notifications/audit/balances/calendar/invites/companies.
 
 ## Metadata
 

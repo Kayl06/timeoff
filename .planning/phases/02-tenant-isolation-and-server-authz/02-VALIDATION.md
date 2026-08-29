@@ -40,11 +40,13 @@ created: 2026-08-29
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 01 | 0 | AUTHZ-01 | T-02-01 | No session → 401; body user_id ignored | unit | `node --test --experimental-strip-types src/lib/require-tenant-session.test.ts src/lib/bind-leave-actor.test.ts` | ❌ W0 | ⬜ pending |
-| 02-01-02 | 01 | 0 | AUTHZ-02 | T-02-02 | JWT company A cannot SELECT company B rows | db | `supabase test db` | ❌ W0 | ⬜ pending |
-| 02-01-03 | 01 | 0 | AUTHZ-03 | T-02-03 | role anon SELECT/INSERT on tenant tables denied | db | `supabase test db` | ❌ W0 | ⬜ pending |
-| 02-01-04 | 01 | 0 | TENANT-04 | T-02-04 | invites/companies not readable cross-tenant with user JWT | db | `supabase test db` | ❌ W0 | ⬜ pending |
-| 02-01-05 | 01 | 0 | AUTHZ-01 | T-02-05 | mintTenantAccessToken payload has role, sub, company_id | unit | `node --test --experimental-strip-types src/lib/supabase-jwt.test.ts` | ❌ W0 | ⬜ pending |
+| 02-01-01 | 01 | 0 | AUTHZ-01 | T-02-03 | tenantSessionRejectStatus returns 401 when userId or companyId missing/empty; else null | unit | `node --test --experimental-strip-types src/lib/require-tenant-session.test.ts` | ❌ W0 | ⬜ pending |
+| 02-01-02 | 01 | 0 | AUTHZ-01 | T-02-01 | bindLeaveCreateActor/bindLeaveApprover overwrite actor ids from session; body copies ignored | unit | `node --test --experimental-strip-types src/lib/bind-leave-actor.test.ts` | ❌ W0 | ⬜ pending |
+| 02-01-03 | 01 | 0 | AUTHZ-02 | T-02-02 | mintTenantAccessToken payload has role authenticated, sub, company_id | unit | `node --test --experimental-strip-types src/lib/supabase-jwt.test.ts` | ❌ W0 | ⬜ pending |
+| 02-06-01 | 06 | 4 | AUTHZ-02 | T-01-06 | JWT company A cannot SELECT company B rows | db | `supabase test db` | ❌ W0 in 02-06 | ⬜ pending |
+| 02-06-02 | 06 | 4 | AUTHZ-03 | T-01-06 | role anon SELECT/INSERT on tenant tables denied | db | `supabase test db` | ❌ W0 in 02-06 | ⬜ pending |
+| 02-06-03 | 06 | 4 | TENANT-04 | T-01-06 | JWT company A cannot INSERT/UPDATE/DELETE company B rows | db | `supabase test db` | ❌ W0 in 02-06 | ⬜ pending |
+| 02-06-04 | 06 | 4 | TENANT-04 | T-01-06 | invites/companies not readable or writable cross-tenant with user JWT | db | `supabase test db` | ❌ W0 in 02-06 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -52,11 +54,11 @@ created: 2026-08-29
 
 ## Wave 0 Requirements
 
-- [ ] `apps/web/src/lib/require-tenant-session.ts` + `.test.ts` — fail closed (no session → 401)
-- [ ] `apps/web/src/lib/supabase-jwt.ts` + `.test.ts` — assert payload keys `role`, `sub`, `company_id`
-- [ ] `apps/web/src/lib/bind-leave-actor.ts` + `.test.ts` — body `user_id` ignored
-- [ ] Extend `apps/web` `"test"` script with the new files
-- [ ] `supabase/tests/tenant_rls.test.sql` — anon deny; two companies; `authenticated` JWT fixtures
+- [ ] `apps/web/src/lib/require-tenant-session.ts` + `.test.ts` — fail closed (no session → 401) — plan 02-01
+- [ ] `apps/web/src/lib/supabase-jwt.ts` + `.test.ts` — assert payload keys `role`, `sub`, `company_id` — plan 02-01
+- [ ] `apps/web/src/lib/bind-leave-actor.ts` + `.test.ts` — body `user_id` ignored — plan 02-01
+- [ ] Extend `apps/web` `"test"` script with the new files — plan 02-01
+- [ ] `supabase/tests/tenant_rls.test.sql` — anon deny; two companies; SELECT plus INSERT/UPDATE/DELETE deny; `authenticated` JWT fixtures — plan 02-06
 - [ ] Framework install: `jose@4.15.9` only (not Vitest)
 
 *Existing Phase 1 tests stay green; do not remove them.*
