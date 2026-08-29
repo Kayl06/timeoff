@@ -7,17 +7,54 @@ import { useDashboardData } from '@/hooks/use-dashboard-data'
 import { LeaveRequest, User, UserRole } from '@timeoff/types'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
+const EMPTY_HEADING = 'No teammates yet'
+const EMPTY_BODY = 'Invite people by email so they can join this company. Open your profile menu and choose Invite teammates.'
 
 export function DashboardView({ slug }: { slug: string }) {
   const [selectedTab, setSelectedTab] = useState<string>(slug || 'overview')
+  const [teammateCount, setTeammateCount] = useState<number | null>(null)
 
   useEffect(() => {
     setSelectedTab(slug)
   }, [slug])
 
 
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
+
+  useEffect(() => {
+    if (status !== 'authenticated' || !session?.user?.isOwner) {
+      return
+    }
+
+    let cancelled = false
+
+    async function loadTeammateCount() {
+      try {
+        const response = await fetch('/api/auth/invites', { credentials: 'include' })
+        const payload = await response.json().catch(() => ({}))
+        if (cancelled) {
+          return
+        }
+        if (!response.ok) {
+          toast.error(payload.error || 'Failed to load teammates')
+          return
+        }
+        setTeammateCount(typeof payload.teammateCount === 'number' ? payload.teammateCount : 0)
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Failed to load teammates:', error)
+          toast.error('Failed to load teammates')
+        }
+      }
+    }
+
+    loadTeammateCount()
+    return () => {
+      cancelled = true
+    }
+  }, [status, session?.user?.isOwner])
 
   // Map NextAuth session user to User type
   const user: User = {
@@ -62,6 +99,15 @@ export function DashboardView({ slug }: { slug: string }) {
           isLoading={isCreatingLeaveRequest}
           calculateTotalDays={calculateTotalDays}
         />
+
+        {session?.user?.isOwner && teammateCount === 0 && (
+          <div className="mb-8">
+            <p className="font-bold">{EMPTY_HEADING}</p>
+            <p className="mt-1 whitespace-normal break-words text-gray-600">
+              {EMPTY_BODY}
+            </p>
+          </div>
+        )}
 
         {/* Tabs */}
         <DashboardTabs
