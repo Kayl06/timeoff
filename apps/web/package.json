@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "test": "node --test --experimental-strip-types src/lib/invite-token.test.ts",
     "clean": "rm -rf .next"
   },
   "dependencies": {
