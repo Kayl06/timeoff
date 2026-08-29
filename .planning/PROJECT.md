@@ -27,8 +27,10 @@ Shipped product surfaces. Do **not** re-plan these unless a later phase must mod
 - ✓ Leave request form (dates, type, half-day, validation) and request list / data table — existing
 - ✓ Approve / reject / cancel / delete / bulk-action **UI** — existing (side effects are Active)
 - ✓ Personal calendar and team calendar **pages** — existing (data consistency is Active)
-- ✓ Credentials sign-in and optional Google OAuth sign-in UI — existing (tenant-safe join is Active)
-- ✓ Self-serve signup UI and API that creates a `users` row — existing (org + balances + invites are Active)
+- ✓ Credentials sign-in and optional Google OAuth sign-in UI — existing (tenant-safe join shipped Phase 1)
+- ✓ Self-serve signup UI and API that creates a `users` row — existing (org + invites shipped Phase 1; balances still Active)
+- ✓ Company self-signup: first user creates the org; later people join by invite, not a global open directory — Phase 1
+- ✓ Google sign-in cannot auto-provision a user into the wrong company (or a global employee pool) — Phase 1
 - ✓ Forgot / reset password **pages** — existing (send mail + persist hash is Active)
 - ✓ Domain modules and schema for users, leave requests, leave balances, departments, teams, leave policies, notifications, audit logs, calendar events — existing
 - ✓ NextAuth JWT session + middleware gate on non-auth document routes — existing
@@ -38,7 +40,6 @@ Shipped product surfaces. Do **not** re-plan these unless a later phase must mod
 
 Hypotheses until shipped. Each either **modifies** a broken/stubbed path or **adds** the tenant boundary the current single-company app does not have.
 
-- [ ] Company self-signup: first user creates the org; later people join by invite, not a global open directory
 - [ ] Tenant isolation: Company A never reads or mutates Company B’s people, requests, balances, calendars, notifications, or audit
 - [ ] Close the open data path: stop browser writes with the public anon key; restore real authorization (server session + restrictive RLS)
 - [ ] Dashboard remaining days show live `leave_balances` rows (stop hardcoded mock cards)
@@ -50,7 +51,6 @@ Hypotheses until shipped. Each either **modifies** a broken/stubbed path or **ad
 - [ ] Sign-in matches the UI: deactivated users cannot use the app; errors do not pretend a reset happened if nothing was sent
 - [ ] Personal and team calendars show the same leave requests as the dashboard for that tenant
 - [ ] Audit rows for leave lifecycle actually insert (no `user_id: 'system'` FK failures, no swallowed mocks)
-- [ ] Google sign-in cannot auto-provision a user into the wrong company (or a global employee pool)
 
 ### Out of Scope
 
@@ -76,7 +76,7 @@ Hypotheses until shipped. Each either **modifies** a broken/stubbed path or **ad
 - `is_active` is not enforced on credentials login; dashboard can force inactive users to look active
 - Day math is inclusive calendar days; unused `calculateWorkingDays` in `@timeoff/utils` — leave that unused this milestone
 
-**Tenant gap:** There is no company/org foreign key. `users`, `leave_requests`, and related tables are a single shared directory. Google first-login inserts a global `employee`. Open signup is a cross-tenant leak unless scoped to invite + org.
+**Tenant gap (after Phase 1):** `companies` and `users.company_id` exist; signup and invites bind people to one org; unknown Google is deny-by-default. Cross-tenant **reads/writes** are still open: RLS is `USING (true)` and the browser still uses the anon key. Phase 2 closes that.
 
 **Handoff bar:** Success is operational, not visual. A client uses the existing screens with live numbers and mail; we do not insert balances or reset passwords in SQL for them.
 
@@ -103,7 +103,7 @@ Hypotheses until shipped. Each either **modifies** a broken/stubbed path or **ad
 | Notices = in-app persist + email on approve/reject | Status change without a durable notice is not a complete existing flow | — Pending |
 | Customers are client companies on one deployment | Internal-only hardening would be a different milestone | — Pending |
 | True multi-tenant isolation in this milestone | Shared DB without org boundary cannot be handed to two clients | — Pending |
-| Company self-signup: first user creates org, then invites | No global admin users page and no SQL at handoff | — Pending |
+| Company self-signup: first user creates org, then invites | No global admin users page and no SQL at handoff | Phase 1 — owner_id + invite token hash; Google InviteRequired |
 | Close RLS / client-write hole | Required for real users on a shared deployment | — Pending |
 | Skip finishing stub admin users page | Self-serve org + invites replaces a global operator console for this milestone | — Pending |
 | Done = request → approve → balance → calendar without SQL | Observable client handoff, not a demo of mock numbers | — Pending |
@@ -126,4 +126,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-29 after initialization*
+*Last updated: 2026-08-29 after Phase 1*
