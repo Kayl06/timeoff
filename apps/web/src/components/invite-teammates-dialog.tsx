@@ -13,12 +13,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { ALREADY_IN_COMPANY_ERROR } from '@/lib/invite-auth'
 import { inviteEmailSchema } from '@/lib/validation'
 
 const EMPTY_HEADING = 'No teammates yet'
 const EMPTY_BODY = 'Invite people by email so they can join this company. Open your profile menu and choose Invite teammates.'
 const VALIDATION_COPY = 'Please enter a valid email address'
-const DUPLICATE_COPY = 'That email is already in this company.'
 const UNAUTHORIZED_COPY = 'Only the company owner can invite teammates.'
 const SUCCESS_HELPER = 'Share this link if they don’t get email:'
 
@@ -116,7 +116,11 @@ export function InviteTeammatesDialog({ open, onOpenChange }: InviteTeammatesDia
       }
 
       if (response.status === 409) {
-        setEmailError(payload.error || DUPLICATE_COPY)
+        const conflictError =
+          typeof payload.error === 'string' && payload.error.length > 0
+            ? payload.error
+            : ALREADY_IN_COMPANY_ERROR
+        setEmailError(conflictError)
         return
       }
 
