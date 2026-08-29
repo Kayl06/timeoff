@@ -12,14 +12,14 @@ Requirements for this milestone. Shipped UI (dashboard shell, request form, appr
 - [x] **TENANT-01**: First user can create a company at signup and owns that org
 - [x] **TENANT-02**: That user can invite people by email into only their company
 - [x] **TENANT-03**: Invitee joins that company and cannot see any other company
-- [ ] **TENANT-04**: Company A cannot read or change Company B’s people, requests, balances, calendars, notifications, or audit
+- [x] **TENANT-04**: Company A cannot read or change Company B’s people, requests, balances, calendars, notifications, or audit
 - [x] **TENANT-05**: Google sign-in does not place a user in the wrong company or a global pool
 
 ### Authorization
 
 - [x] **AUTHZ-01**: Leave and user mutations run on the server using the signed-in session, not the browser anon key
-- [ ] **AUTHZ-02**: Database policies deny rows outside the session user’s company
-- [ ] **AUTHZ-03**: The public API key cannot read or write leave, user, or notification data without a valid tenant session
+- [x] **AUTHZ-02**: Database policies deny rows outside the session user’s company
+- [x] **AUTHZ-03**: The public API key cannot read or write leave, user, or notification data without a valid tenant session
 
 ### Balances
 
@@ -93,11 +93,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TENANT-01 | Phase 1 | Complete |
 | TENANT-02 | Phase 1 | Complete |
 | TENANT-03 | Phase 1 | Complete |
-| TENANT-04 | Phase 2 | Pending |
+| TENANT-04 | Phase 2 | Complete |
 | TENANT-05 | Phase 1 | Complete |
 | AUTHZ-01 | Phase 2 | Complete |
-| AUTHZ-02 | Phase 2 | Pending |
-| AUTHZ-03 | Phase 2 | Pending |
+| AUTHZ-02 | Phase 2 | Complete |
+| AUTHZ-03 | Phase 2 | Complete |
 | BAL-01 | Phase 3 | Pending |
 | BAL-02 | Phase 3 | Pending |
 | BAL-03 | Phase 4 | Pending |

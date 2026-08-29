@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
-status: executing
-stopped_at: Completed 02-07-PLAN.md
-last_updated: "2026-08-29T13:54:45.828Z"
+status: verifying
+stopped_at: Completed 02-06-PLAN.md
+last_updated: "2026-08-29T14:03:16.563Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 2 execution started
-state_head: 45c72de0ac3dea01f4fac406290318a1d1e3bd9f
+state_head: 90949130da9d9cf4aba7278b037ca3890c2f01d8
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 15
+  completed_plans: 16
   percent: 14
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 
 Phase: 2 (Tenant Isolation and Server Authz) — EXECUTING
 Plan: 7 of 7
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-29 — Phase 2 execution started
 
 Progress: [█░░░░░░░░░] 14%
@@ -73,6 +73,7 @@ Progress: [█░░░░░░░░░] 14%
 | Phase 02-tenant-isolation-and-server-authz P04 | 2 min | 2 tasks | 9 files |
 | Phase 02-tenant-isolation-and-server-authz P05 | 2 min | 3 tasks | 7 files |
 | Phase 02-tenant-isolation-and-server-authz P07 | 2 min | 3 tasks | 7 files |
+| Phase 02-tenant-isolation-and-server-authz P06 | 5 min | 3 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,9 @@ Recent decisions affecting current work:
 - [Phase 02-tenant-isolation-and-server-authz]: recentRequests fetches /api/leave-requests?scope=own so managers still see their own list; server default would be team/all
 - [Phase 02-tenant-isolation-and-server-authz]: DatabaseServiceProvider yields null when service is omitted so useDatabaseService throws instead of constructing a browser anon client
 - [Phase 02-tenant-isolation-and-server-authz]: UserRepository domain selects use USER_DOMAIN_COLUMNS without password; findByEmail still select star (not a BFF list path this plan)
+- [Phase 02-tenant-isolation-and-server-authz]: Child isolation stays EXISTS through users.company_id; no company_id columns on leave/balances/notifications/audit/calendar
+- [Phase 02-tenant-isolation-and-server-authz]: Catalog departments/teams/leave_policies get authenticated SELECT USING (true) this phase (A2); tenant tables do not
+- [Phase 02-tenant-isolation-and-server-authz]: calendar_events with null user_id remain visible to authenticated tenants
 
 ### Pending Todos
 
@@ -145,6 +149,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T13:54:45.666Z
-Stopped at: Completed 02-07-PLAN.md
+Last session: 2026-08-29T14:03:16.415Z
+Stopped at: Completed 02-06-PLAN.md
 Resume file: None
