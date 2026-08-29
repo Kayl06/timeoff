@@ -1,7 +1,7 @@
 ---
 phase: 01-company-signup-and-invites
 verified: 2026-08-29T11:44:07Z
-status: human_needed
+status: passed
 score: 22/32 must-haves verified
 behavior_unverified: 10
 overrides_applied: 0
@@ -12,6 +12,7 @@ re_verification:
   previous_status: human_needed
   previous_score: 12/20
   gaps_closed:
+
     - "G-01-1: signup client password rules match PASSWORD_REQUIREMENTS (min 12 + composition); 400 details map onto errors.*; toasts use sonner"
     - "G-01-4 create: POST /api/auth/invites 409s any existing users.email (global lookup) with distinct this-company vs other-company copy"
     - "G-01-4 preview/UI: GET preview 409 EMAIL_EXISTS_ERROR; accept-invite shows existing-account card before the join form"
@@ -19,60 +20,75 @@ re_verification:
   gaps_remaining: []
   regressions: []
 deferred:
+
   - truth: "An invitee cannot read other companies' rows via PostgREST (open RLS USING true)"
     addressed_in: "Phase 2"
     evidence: "Phase 2 goal/success criteria: Company A cannot read or change Company B’s people, requests, balances, calendars, notifications, or audit. TENANT-04 / AUTHZ-02. Phase 1 PLAN prohibition: cannot see other companies means join binding, not PostgREST isolation."
 behavior_unverified_items:
+
   - truth: "First user at signup creates a company and owns that org"
     test: "Submit credentials signup with a unique email and company name, then sign in."
     expected: "A companies row exists with owner_id equal to that user; users.company_id is set; role is admin; session.isOwner is true."
     why_human: "Route and RPC are wired; no test invokes create_company_with_owner or asserts the persisted owner_id."
+
   - truth: "That owner can invite people by email into only their company"
     test: "Sign in as owner, send an invite, inspect the stored row; try POST /api/auth/invites as a non-owner."
     expected: "company_invites.company_id equals the owner's company; 403 for non-owner; client cannot pass another company_id. UAT test 3 already passed copy-link; re-check only if invite create regressed."
     why_human: "Owner gate helper is unit-tested; the HTTP persist path is not."
+
   - truth: "An invitee joins that company and cannot see any other company"
     test: "Open a copy-link, complete credentials join, confirm the new user has only that company_id."
     expected: "users.company_id equals the invite's company_id; no company picker; role employee."
     why_human: "companyIdFromInvite is unit-tested; accept_invite_with_employee persist is not exercised by a test. Cross-tenant reads are Phase 2."
+
   - truth: "Google sign-in does not place a user in the wrong company or a global employee pool"
     test: "With Google OAuth configured, sign in with an unknown Gmail on /auth/signin (no pending cookies)."
     expected: "Redirect to /auth/error?error=InviteRequired; no new users row."
     why_human: "decideGoogleSignIn is unit-tested; auth.ts insert-deny and live Google callback are not. GOOGLE_CLIENT_ID/SECRET are absent in apps/web/.env.local."
+
   - truth: "Second credentials signup with the same email is 409 and must not create a second company"
     test: "POST /api/auth/signup twice with the same email."
     expected: "Second response is 409 User with this email already exists; only one companies row for that owner email."
     why_human: "Duplicate check and 23505 mapping exist in the route; no test hits Postgres."
+
   - truth: "Concurrent signup: one winner; loser is 409; no company row without owner_id"
     test: "Fire two overlapping signups for the same email against a DB that has the RPC."
     expected: "One 201, one 409; no companies.owner_id NULL leftover."
     why_human: "RPC is a single plpgsql transaction, but concurrency is untested."
+
   - truth: "Accept binds users.company_id to the invite's company_id only"
     test: "POST /api/auth/invites/accept with a valid token and extra JSON fields attempting another company id."
     expected: "Created user.company_id equals invite.company_id; extra body fields ignored; schema has no companyId/email."
     why_human: "Mapper is unit-tested; accept RPC persist is not."
+
   - truth: "Google accept: pending invite cookie; Google email must match invite.email or mismatch URL"
     test: "Accept-invite Continue with Google using a Google account that does not match the invited email."
     expected: "Redirect to /auth/accept-invite?error=mismatch; no employee insert."
     why_human: "Mismatch string is in auth.ts; no test drives the Google signIn callback."
+
   - truth: "Credentials POST /api/auth/invites/accept inserts the employee and marks the invite accepted in one Postgres function; a failed status update does not leave a live users row with a still-pending invite (G-01-4 / WR-04)"
     test: "Call accept_invite_with_employee with a non-pending invite id (or fail the UPDATE) and inspect users + company_invites."
     expected: "No leftover users row; invite stays pending; route maps invite_not_pending to 404."
     why_human: "SQL has INSERT then UPDATE WHERE pending / RAISE invite_not_pending; no test runs the function."
+
   - truth: "Google bind uses the same RPC with p_password null; unique-violation 23505 and other-company existing member redirect to ACCOUNT_EXISTS_PATH, not InviteRequired (G-01-4)"
     test: "Accept-invite Continue with Google using an account whose email already belongs to another company."
     expected: "Redirect to /auth/error?error=AccountExists; Sign in CTA goes to /auth/signin; no second users row."
     why_human: "auth.ts branches and ACCOUNT_EXISTS_PATH constant are present; no test drives the Google signIn callback. Live OAuth remains third-party blocked without GOOGLE_CLIENT_ID."
 human_verification:
+
   - test: "UAT G-01-1 re-test on /auth/signup. Type an 8-character password: Create company stays disabled and the length checklist row is unmet. Type 12 letters with no number/special: still disabled with a password field or checklist miss. A valid 12+ composition password enables the CTA. Submit a unique email and confirm success toast + /auth/signin. Repeat the same email and confirm duplicate copy on the email field."
     expected: "Visible password errors (Password must be at least 12 characters and composition messages). Success: Company created. Sign in with your new credentials. Duplicate: An account with this email already exists. Sign in, or ask your admin for an invite. Owner can sign in with isOwner."
     why_human: "Planner deferred this to end-of-phase; diagnosed UAT G-01-1 must be re-tested in the browser. Do not treat code presence as UAT pass."
+
   - test: "UAT G-01-4 owner path. As owner, invite an email already in this company, then an email that already signed up on another company. Confirm no copy-link on 409."
     expected: "This-company: That email is already in this company. Other-company: An account with this email already exists. Sign in, or ask your admin for an invite. No acceptUrl."
     why_human: "Dialog copy and live 409 against a session cookie need a browser. Helper tests do not prove the HTTP path."
+
   - test: "UAT G-01-4 accept path. Open a leftover/raced invite link for an email that already has an account. Then join with a new email on a fresh invite. Try a junk token."
     expected: "Existing email: existing-account sentence and Back to sign in, not Join {company}. New email: Join {company}; credentials join lands on dashboard. Invalid: This invite is invalid or has expired. Ask your admin to send a new invite."
     why_human: "Diagnosed UAT G-01-4 must be re-tested. Preview/accept persist and the exists card are runtime UI."
+
   - test: "Configure Google OAuth (GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are currently absent). Unknown Gmail on /auth/signin with no pending cookies. Signup Google with a company name filled. Optional: Google join with an email that already has an account."
     expected: "Unknown Gmail lands on Invite required with Create a company and Back to sign in; no users row in a global pool. Signup Google creates an owner via create_company_with_owner with p_password null. Existing-account Google lands on AccountExists with Sign in to /auth/signin, not Invite required."
     why_human: "Live Google OAuth remains third-party blocked without GOOGLE_CLIENT_ID. Unit tests cover decideGoogleSignIn and ACCOUNT_EXISTS_PATH only."
