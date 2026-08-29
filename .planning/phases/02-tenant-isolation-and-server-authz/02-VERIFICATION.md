@@ -1,7 +1,7 @@
 ---
 phase: 02-tenant-isolation-and-server-authz
 verified: 2026-08-29T14:09:42Z
-status: human_needed
+status: passed
 score: 11/12 must-haves verified
 behavior_unverified: 1
 overrides_applied: 0
@@ -13,23 +13,29 @@ mvp_goal_format:
   plan_goal_is_user_story: true
   note: "ROADMAP.md Phase 2 goal is not As a / I want to / so that. PLAN files carry that user story; verification used ROADMAP success criteria plus the PLAN story for User Flow Coverage."
 behavior_unverified_items:
+
   - truth: "Requesting, approving, or updating leave as a signed-in user still works; those writes are bound to the signed-in session, not the browser anon key"
     test: "Sign in, submit a leave request on the existing form, then as a same-company manager approve, reject, cancel, and bulk-select from the existing dialogs. Watch the Network tab."
     expected: "Create/approve/update succeed. Requests go to /api/leave-requests (POST/PATCH/bulk), not PostgREST /rest/v1/leave_requests. The created row's user_id is the signed-in user even if the client sent another user_id."
     why_human: "Bind helpers and BFF routes are present and unit-tested; no test hits getServerSession, mints a JWT, or persists a leave_requests row through the HTTP path."
 human_verification:
+
   - test: "Log in, submit a leave request on the existing form. Open DevTools Network."
     expected: "POST /api/leave-requests (credentials included), not /rest/v1/leave_requests. The new row appears for that user. Manager/admin/hr self-leave is approved in the same POST (no second client approve call)."
     why_human: "Requires a browser session cookie and live local app; node:test does not exercise Network tab or the form."
+
   - test: "As a manager on the same company, approve, reject, cancel, and bulk-select from the existing dialogs. Watch Network."
     expected: "Calls go to /api/leave-requests/{id} PATCH and /api/leave-requests/bulk POST, not PostgREST leave_requests. Existing sonner toasts and table refresh still happen."
     why_human: "Requires a browser session cookie and live dialogs."
+
   - test: "Without a session cookie, GET /api/leave-balances and GET /api/manager-team-stats. Then sign in as a manager and GET /api/manager-team-stats again."
     expected: "Unauthenticated GETs return 401 JSON Unauthorized. Signed-in manager GET /api/manager-team-stats is 200. Signed-in employee GET /api/manager-team-stats is 403."
     why_human: "Route code gates on getServerSession; no HTTP test drives the cookie."
+
   - test: "Credentials sign-in, signup create-company, and invite preview/accept against local Supabase. GET /api/test-connection."
     expected: "Sign-in, create-company, and accept-invite still succeed (SECURITY DEFINER RPCs). GET /api/test-connection returns env SET/NOT SET only — no user emails or rows."
     why_human: "Onboarding RPCs and identity service_role are wired; live signup/accept is not exercised by a test. test-connection body shape is visible in code but not hit here."
+
   - test: "Two signed-in companies on the same local deployment. Open Company A dashboard (people, requests, balances, notifications) and personal/unified calendar."
     expected: "A does not list B people or requests. Dashboard Network has no /rest/v1/leave_requests (or other tenant tables). Personal and unified calendars load /api/calendar/leave-requests. Team calendar page may still show its pre-existing mock rows (02-07 removed only an unused import; CAL-01/CAL-02 are Phase 7)."
     why_human: "pgTAP proves Postgres isolation; two-company UI and the browser Network tab cannot be seen from grep."
