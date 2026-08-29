@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { companyIdFromInvite, inviteIsUsable } from './invite-accept.ts'
+import { companyIdFromInvite, inviteIsUsable, invitePreviewPageState } from './invite-accept.ts'
 
 const COMPANY_ID = '11111111-1111-4111-8111-111111111111'
 const OTHER_ID = '22222222-2222-4222-8222-222222222222'
@@ -52,6 +52,33 @@ describe('inviteIsUsable', () => {
     assert.equal(
       inviteIsUsable({ status: 'pending', expires_at: pastIso() }),
       false
+    )
+  })
+})
+
+describe('invitePreviewPageState', () => {
+  it('is invalid when the invite is not usable', () => {
+    assert.equal(
+      invitePreviewPageState({ usable: false, existingUser: false }),
+      'invalid'
+    )
+    assert.equal(
+      invitePreviewPageState({ usable: false, existingUser: true }),
+      'invalid'
+    )
+  })
+
+  it('is exists when the invite is usable and the email already has an account', () => {
+    assert.equal(
+      invitePreviewPageState({ usable: true, existingUser: true }),
+      'exists'
+    )
+  })
+
+  it('is ready when the invite is usable and the email is free', () => {
+    assert.equal(
+      invitePreviewPageState({ usable: true, existingUser: false }),
+      'ready'
     )
   })
 })
