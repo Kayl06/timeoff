@@ -75,6 +75,11 @@ export const userSignInSchema = z.object({
   password: z.string().min(1, 'Password is required')
 })
 
+/** Owner invite: email only; company_id is never taken from the client. */
+export const inviteEmailSchema = z.object({
+  email: emailSchema,
+})
+
 /** Pending Google OAuth context: company name or invite token (httpOnly cookie payload). */
 export const pendingContextSchema = z.discriminatedUnion('kind', [
   z.object({
@@ -178,6 +183,7 @@ export const dateRangeSchema = z.object({
 // Export types from schemas
 export type UserRegistrationInput = z.infer<typeof userRegistrationSchema>
 export type UserSignInInput = z.infer<typeof userSignInSchema>
+export type InviteEmailInput = z.infer<typeof inviteEmailSchema>
 export type PendingContextInput = z.infer<typeof pendingContextSchema>
 export type LeaveRequestInput = z.infer<typeof leaveRequestSchema>
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>
