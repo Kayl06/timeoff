@@ -37,23 +37,23 @@ export function LeaveBalanceCard({ leaveBalance, isLoading }: LeaveBalanceCardPr
 
   const cardBalances = balancesForLeaveCard(leaveBalance ?? [])
 
-  // if (!leaveBalance || leaveBalance.length === 0) {
-  //   return (
-  //     <Card>
-  //       <CardHeader>
-  //         <CardTitle className="flex items-center gap-2">
-  //           <Calendar className="h-5 w-5" />
-  //           Leave Balance
-  //         </CardTitle>
-  //       </CardHeader>
-  //       <CardContent>
-  //         <p className="text-muted-foreground text-center py-8">
-  //           No leave balance information available
-  //         </p>
-  //       </CardContent>
-  //     </Card>
-  //   )
-  // }
+  if (!leaveBalance || leaveBalance.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Leave Balance
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground text-center py-8">
+            No leave balance information available
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
 
   const getLeaveTypeDisplayName = (type: string) => {
     const displayNames: Record<string, string> = {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { User, LeaveRequest, LeaveBalance, Notification } from '@timeoff/types'
 import { calculateTotalDays } from '@/lib/date-utils'
@@ -59,7 +60,7 @@ export function useDashboardData(user: User): DashboardDataReturn {
   const isAdminOrHR = user.role === 'admin' || user.role === 'hr'
 
   // Fetch user's leave balance
-  const { data: leaveBalance, isLoading: balanceLoading } = useQuery({
+  const { data: leaveBalance, isLoading: balanceLoading, error: leaveBalanceError } = useQuery({
     queryKey: ['leaveBalance', user.id],
     queryFn: () => fetchSessionJson<DatabaseLeaveBalance[]>(
       '/api/leave-balances',
@@ -67,6 +68,12 @@ export function useDashboardData(user: User): DashboardDataReturn {
     ),
     enabled: !!user?.id
   })
+
+  useEffect(() => {
+    if (leaveBalanceError) {
+      toast.error('Failed to load leave balances')
+    }
+  }, [leaveBalanceError])
 
   // Fetch user's recent requests (scope=own so managers still see their own list)
   const { data: recentRequests, isLoading: requestsLoading } = useQuery({
