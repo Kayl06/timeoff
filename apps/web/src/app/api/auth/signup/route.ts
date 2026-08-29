@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       }
       devLog.error('Error creating company:', createError)
       return NextResponse.json(
-        { error: 'Failed to create user', details: createError.message },
+        { error: 'Failed to create user' },
         { status: 500 }
       )
     }
