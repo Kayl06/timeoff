@@ -21,14 +21,23 @@ INSERT INTO teams (id, name, department_id, description, is_active) VALUES
   ('660e8400-e29b-41d4-a716-446655440005', 'Content Marketing', '550e8400-e29b-41d4-a716-446655440002', 'Content creation team', true)
 ON CONFLICT (name, department_id) DO NOTHING;
 
--- Insert sample users (skip if already exist)
-INSERT INTO users (id, email, first_name, last_name, department, team, role, hire_date, is_active, password) VALUES
-  ('770e8400-e29b-41d4-a716-446655440001', 'john.doe@company.com', 'John', 'Doe', 'Engineering', 'Frontend Team', 'supervisor', '2023-01-15', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6'),
-  ('770e8400-e29b-41d4-a716-446655440002', 'jane.smith@company.com', 'Jane', 'Smith', 'Engineering', 'Backend Team', 'employee', '2023-03-20', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6'),
-  ('770e8400-e29b-41d4-a716-446655440003', 'mike.johnson@company.com', 'Mike', 'Johnson', 'Marketing', 'Digital Marketing', 'supervisor', '2023-02-10', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6'),
-  ('770e8400-e29b-41d4-a716-446655440004', 'sarah.wilson@company.com', 'Sarah', 'Wilson', 'Human Resources', 'Unassigned', 'hr', '2023-01-05', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6'),
-  ('770e8400-e29b-41d4-a716-446655440005', 'admin@company.com', 'Admin', 'User', 'Engineering', 'Unassigned', 'admin', '2023-01-01', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6')
+-- Demo company (owner_id set after users exist because of the circular FK)
+INSERT INTO companies (id, name, owner_id) VALUES
+  ('110e8400-e29b-41d4-a716-446655440001', 'Timeoff Demo', NULL)
+ON CONFLICT (id) DO NOTHING;
+
+-- Insert sample users (all bound to the demo company; owner is admin@company.com)
+INSERT INTO users (id, email, first_name, last_name, department, team, role, hire_date, is_active, password, company_id) VALUES
+  ('770e8400-e29b-41d4-a716-446655440001', 'john.doe@company.com', 'John', 'Doe', 'Engineering', 'Frontend Team', 'supervisor', '2023-01-15', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6', '110e8400-e29b-41d4-a716-446655440001'),
+  ('770e8400-e29b-41d4-a716-446655440002', 'jane.smith@company.com', 'Jane', 'Smith', 'Engineering', 'Backend Team', 'employee', '2023-03-20', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6', '110e8400-e29b-41d4-a716-446655440001'),
+  ('770e8400-e29b-41d4-a716-446655440003', 'mike.johnson@company.com', 'Mike', 'Johnson', 'Marketing', 'Digital Marketing', 'supervisor', '2023-02-10', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6', '110e8400-e29b-41d4-a716-446655440001'),
+  ('770e8400-e29b-41d4-a716-446655440004', 'sarah.wilson@company.com', 'Sarah', 'Wilson', 'Human Resources', 'Unassigned', 'hr', '2023-01-05', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6', '110e8400-e29b-41d4-a716-446655440001'),
+  ('770e8400-e29b-41d4-a716-446655440005', 'admin@company.com', 'Admin', 'User', 'Engineering', 'Unassigned', 'admin', '2023-01-01', true, '$2b$12$GgxecQts.8szrZtg.moNTOQ/EXnVGM.67rsX6eE5NNmoQPv3upbk6', '110e8400-e29b-41d4-a716-446655440001')
 ON CONFLICT (email) DO NOTHING;
+
+UPDATE companies
+SET owner_id = '770e8400-e29b-41d4-a716-446655440005'
+WHERE id = '110e8400-e29b-41d4-a716-446655440001';
 
 -- Update manager relationships
 UPDATE users SET manager_id = '770e8400-e29b-41d4-a716-446655440001' WHERE id = '770e8400-e29b-41d4-a716-446655440002';
@@ -47,12 +56,12 @@ INSERT INTO leave_balances (id, user_id, leave_type, total_allowance, used_days,
 ON CONFLICT (user_id, leave_type, year) DO NOTHING;
 
 -- Insert sample leave requests (skip if already exist)
-INSERT INTO leave_requests (id, user_id, leave_type, start_date, end_date, total_days, reason, status, approver_id, approved_at, is_half_day) VALUES
-  ('aa0e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440001', 'vacation', '2025-06-15', '2025-06-20', 5, 'Summer vacation with family', 'approved', '770e8400-e29b-41d4-a716-446655440005', '2025-05-20 10:30:00+00', false),
-  ('aa0e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440002', 'sick', '2025-05-10', '2025-05-10', 1, 'Not feeling well', 'approved', '770e8400-e29b-41d4-a716-446655440001', '2025-05-09 14:15:00+00', false),
-  ('aa0e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440003', 'personal', '2025-07-05', '2025-07-05', 1, 'Doctor appointment', 'pending', NULL, NULL, true),
-  ('aa0e8400-e29b-41d4-a716-446655440004', '770e8400-e29b-41d4-a716-446655440002', 'vacation', '2025-08-12', '2025-08-16', 4, 'Weekend getaway', 'draft', NULL, NULL, false),
-  ('aa0e8400-e29b-41d4-a716-446655440005', '770e8400-e29b-41d4-a716-446655440001', 'personal', '2025-06-03', '2025-06-03', 1, 'Dentist appointment', 'approved', '770e8400-e29b-41d4-a716-446655440005', '2025-05-28 09:00:00+00', true)
+INSERT INTO leave_requests (id, user_id, leave_type, start_date, end_date, total_days, reason, status, approver_id, approved_at, is_half_day, half_day_type) VALUES
+  ('aa0e8400-e29b-41d4-a716-446655440001', '770e8400-e29b-41d4-a716-446655440001', 'vacation', '2025-06-15', '2025-06-20', 5, 'Summer vacation with family', 'approved', '770e8400-e29b-41d4-a716-446655440005', '2025-05-20 10:30:00+00', false, NULL),
+  ('aa0e8400-e29b-41d4-a716-446655440002', '770e8400-e29b-41d4-a716-446655440002', 'sick', '2025-05-10', '2025-05-10', 1, 'Not feeling well', 'approved', '770e8400-e29b-41d4-a716-446655440001', '2025-05-09 14:15:00+00', false, NULL),
+  ('aa0e8400-e29b-41d4-a716-446655440003', '770e8400-e29b-41d4-a716-446655440003', 'personal', '2025-07-05', '2025-07-05', 1, 'Doctor appointment', 'pending', NULL, NULL, true, 'morning'),
+  ('aa0e8400-e29b-41d4-a716-446655440004', '770e8400-e29b-41d4-a716-446655440002', 'vacation', '2025-08-12', '2025-08-16', 4, 'Weekend getaway', 'draft', NULL, NULL, false, NULL),
+  ('aa0e8400-e29b-41d4-a716-446655440005', '770e8400-e29b-41d4-a716-446655440001', 'personal', '2025-06-03', '2025-06-03', 1, 'Dentist appointment', 'approved', '770e8400-e29b-41d4-a716-446655440005', '2025-05-28 09:00:00+00', true, 'morning')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert sample notifications (skip if already exist)
