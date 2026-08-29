@@ -1,5 +1,6 @@
 import { DatabaseClient } from '../shared/types';
 import { DatabaseUtils } from '../shared/utils';
+import { USER_DOMAIN_COLUMNS } from '../users/repository';
 import { 
   LeaveRequest, 
   CreateLeaveRequestData, 
@@ -9,6 +10,9 @@ import {
   LeaveRequestStats
 } from './types';
 
+const LEAVE_REQUEST_USER_EMBED = `users!leave_requests_user_id_fkey(${USER_DOMAIN_COLUMNS})`;
+const LEAVE_REQUEST_WITH_USER_SELECT = `*, ${LEAVE_REQUEST_USER_EMBED}`;
+
 export class LeaveRequestRepository {
   constructor(private db: DatabaseClient) {}
 
@@ -16,10 +20,7 @@ export class LeaveRequestRepository {
     try {
       const { data, error } = await this.db
         .from('leave_requests')
-        .select(`
-          *,
-          users!leave_requests_user_id_fkey(*)
-        `)
+        .select(LEAVE_REQUEST_WITH_USER_SELECT)
         .eq('id', id)
         .single();
 
@@ -50,10 +51,7 @@ export class LeaveRequestRepository {
     try {
       let query = this.db
         .from('leave_requests')
-        .select(`
-          *,
-          users!leave_requests_user_id_fkey(*)
-        `)
+        .select(LEAVE_REQUEST_WITH_USER_SELECT)
         .is('deleted_at', null);
 
       if (filters) {
@@ -72,10 +70,7 @@ export class LeaveRequestRepository {
     try {
       let query = this.db
         .from('leave_requests')
-        .select(`
-          *,
-          users!leave_requests_user_id_fkey(*)
-        `)
+        .select(LEAVE_REQUEST_WITH_USER_SELECT)
         .eq('status', 'pending');
 
       if (managerId) {
@@ -94,10 +89,7 @@ export class LeaveRequestRepository {
     try {
       const { data, error } = await this.db
         .from('leave_requests')
-        .select(`
-          *,
-          users!leave_requests_user_id_fkey(*)
-        `)
+        .select(LEAVE_REQUEST_WITH_USER_SELECT)
         .eq('users.manager_id', managerId)
         .is('deleted_at', null)
         .eq('users.is_active', true)
@@ -279,10 +271,7 @@ export class LeaveRequestRepository {
     try {
       const { data, error } = await this.db
         .from('leave_requests')
-        .select(`
-          *,
-          users!leave_requests_user_id_fkey(*)
-        `)
+        .select(LEAVE_REQUEST_WITH_USER_SELECT)
         .eq('status', 'approved')
         .eq('users.manager_id', managerId)
         .gte('approved_at', startDate.toISOString())

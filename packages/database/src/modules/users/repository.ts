@@ -2,7 +2,7 @@ import { DatabaseClient } from '../shared/types';
 import { DatabaseUtils } from '../shared/utils';
 import { User, CreateUserData, UpdateUserData, UserFilters, UserStats } from './types';
 
-const USER_DOMAIN_COLUMNS =
+export const USER_DOMAIN_COLUMNS =
   'id, email, first_name, last_name, avatar, department, team, role, manager_id, company_id, hire_date, is_active, created_at, updated_at';
 
 export class UserRepository {
