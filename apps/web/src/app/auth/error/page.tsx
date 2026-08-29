@@ -92,6 +92,12 @@ function AuthErrorContent() {
           description: 'Google sign-in cannot create a company or drop you into a shared employee pool. Ask your admin for an invite, or create a company with email.',
           action: 'Create a company'
         }
+      case 'AccountExists':
+        return {
+          title: 'An account with this email already exists.',
+          description: 'Sign in, or ask your admin for an invite.',
+          action: 'Sign in'
+        }
       default:
         return {
           title: 'Authentication Error',
@@ -116,6 +122,9 @@ function AuthErrorContent() {
         break
       case 'InviteRequired':
         router.push('/auth/signup')
+        break
+      case 'AccountExists':
+        router.push('/auth/signin')
         break
       default:
         router.push('/auth/signin')

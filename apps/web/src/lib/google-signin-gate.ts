@@ -5,6 +5,7 @@
  */
 
 export const INVITE_REQUIRED_PATH = '/auth/error?error=InviteRequired'
+export const ACCOUNT_EXISTS_PATH = '/auth/error?error=AccountExists'
 
 /**
  * Decide whether Google sign-in may proceed.

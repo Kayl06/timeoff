@@ -5,8 +5,9 @@ import bcrypt from 'bcryptjs'
 import { supabase, mapUserFromDatabase } from './supabase'
 import { UserRole } from '@timeoff/types'
 import { env, devLog } from './env'
-import { decideGoogleSignIn, INVITE_REQUIRED_PATH } from './google-signin-gate'
+import { decideGoogleSignIn, ACCOUNT_EXISTS_PATH, INVITE_REQUIRED_PATH } from './google-signin-gate'
 import { buildCreateCompanyWithOwnerArgs } from './create-company-rpc'
+import { buildAcceptInviteWithEmployeeArgs } from './accept-invite-rpc'
 import {
   readPendingKind,
   readPendingValue,
@@ -169,7 +170,8 @@ export const authOptions: NextAuthOptions = {
 
           if (member) {
             if (existingCompanyId !== companyId) {
-              return INVITE_REQUIRED_PATH
+              clearPendingAuthCookies()
+              return ACCOUNT_EXISTS_PATH
             }
 
             await supabase
@@ -186,37 +188,25 @@ export const authOptions: NextAuthOptions = {
 
           const firstName = user.name?.split(' ')[0] || ''
           const lastName = user.name?.split(' ').slice(1).join(' ') || ''
-          const { error: insertError } = await supabase
-            .from('users')
-            .insert({
+          const { error: rpcError } = await supabase.rpc(
+            'accept_invite_with_employee',
+            buildAcceptInviteWithEmployeeArgs({
+              inviteId: inviteRow.id,
               email: inviteRow.email,
-              password: null,
-              first_name: firstName,
-              last_name: lastName,
-              company_id: companyId,
-              role: 'employee',
-              department: 'Unassigned',
-              team: 'Unassigned',
+              passwordHash: null,
+              firstName,
+              lastName,
+              companyId,
             })
+          )
 
-          if (insertError) {
-            if (insertError.code === '23505') {
-              return INVITE_REQUIRED_PATH
+          if (rpcError) {
+            if (rpcError.code === '23505') {
+              clearPendingAuthCookies()
+              return ACCOUNT_EXISTS_PATH
             }
-            devLog.error('Error joining company via Google invite:', insertError)
+            devLog.error('Error joining company via Google invite:', rpcError)
             return INVITE_REQUIRED_PATH
-          }
-
-          const { error: acceptError } = await supabase
-            .from('company_invites')
-            .update({
-              status: 'accepted',
-              accepted_at: new Date().toISOString(),
-            })
-            .eq('id', inviteRow.id)
-
-          if (acceptError) {
-            throw acceptError
           }
 
           clearPendingAuthCookies()
