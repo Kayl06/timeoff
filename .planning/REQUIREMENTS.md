@@ -17,7 +17,7 @@ Requirements for this milestone. Shipped UI (dashboard shell, request form, appr
 
 ### Authorization
 
-- [ ] **AUTHZ-01**: Leave and user mutations run on the server using the signed-in session, not the browser anon key
+- [x] **AUTHZ-01**: Leave and user mutations run on the server using the signed-in session, not the browser anon key
 - [ ] **AUTHZ-02**: Database policies deny rows outside the session user’s company
 - [ ] **AUTHZ-03**: The public API key cannot read or write leave, user, or notification data without a valid tenant session
 
@@ -95,7 +95,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TENANT-03 | Phase 1 | Complete |
 | TENANT-04 | Phase 2 | Pending |
 | TENANT-05 | Phase 1 | Complete |
-| AUTHZ-01 | Phase 2 | Pending |
+| AUTHZ-01 | Phase 2 | Complete |
 | AUTHZ-02 | Phase 2 | Pending |
 | AUTHZ-03 | Phase 2 | Pending |
 | BAL-01 | Phase 3 | Pending |

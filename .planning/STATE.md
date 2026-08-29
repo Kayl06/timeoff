@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: executing
-stopped_at: Completed 02-05-PLAN.md
-last_updated: "2026-08-29T13:50:01.794Z"
+stopped_at: Completed 02-07-PLAN.md
+last_updated: "2026-08-29T13:54:45.828Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 2 execution started
-state_head: 7f0e1016670998c774b102ae9d8a9bb29fc58c7d
+state_head: 45c72de0ac3dea01f4fac406290318a1d1e3bd9f
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 14
+  completed_plans: 15
   percent: 14
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 2 (Tenant Isolation and Server Authz) — EXECUTING
-Plan: 6 of 7
+Plan: 7 of 7
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 2 execution started
 
@@ -72,6 +72,7 @@ Progress: [█░░░░░░░░░] 14%
 | Phase 02-tenant-isolation-and-server-authz P03 | 2 min | 2 tasks | 4 files |
 | Phase 02-tenant-isolation-and-server-authz P04 | 2 min | 2 tasks | 9 files |
 | Phase 02-tenant-isolation-and-server-authz P05 | 2 min | 3 tasks | 7 files |
+| Phase 02-tenant-isolation-and-server-authz P07 | 2 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -121,6 +122,9 @@ Recent decisions affecting current work:
 - [Phase 2]: GET /api/manager-team-stats uses session.user.id as managerId and returns 403 for employee
 - [Phase 02-tenant-isolation-and-server-authz]: Identity uses service_role with persistSession false; tenant leave BFF stays on minted authenticated JWT — service_role bypasses RLS; only identity routes may use it
 - [Phase 02-tenant-isolation-and-server-authz]: GET /api/test-connection returns env SET/NOT SET only; no users rows and no testSupabaseConnection — Unauthenticated diagnostics must not dump people before 02-06 REVOKE
+- [Phase 02-tenant-isolation-and-server-authz]: recentRequests fetches /api/leave-requests?scope=own so managers still see their own list; server default would be team/all
+- [Phase 02-tenant-isolation-and-server-authz]: DatabaseServiceProvider yields null when service is omitted so useDatabaseService throws instead of constructing a browser anon client
+- [Phase 02-tenant-isolation-and-server-authz]: UserRepository domain selects use USER_DOMAIN_COLUMNS without password; findByEmail still select star (not a BFF list path this plan)
 
 ### Pending Todos
 
@@ -141,6 +145,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T13:49:50.343Z
-Stopped at: Completed 02-05-PLAN.md
+Last session: 2026-08-29T13:54:45.666Z
+Stopped at: Completed 02-07-PLAN.md
 Resume file: None
