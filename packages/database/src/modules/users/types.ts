@@ -9,6 +9,7 @@ export interface User extends BaseEntity {
   team: string;
   role: string;
   manager_id?: string;
+  company_id: string;
   hire_date: Date;
   is_active: boolean;
 }
@@ -22,6 +23,7 @@ export interface CreateUserData {
   team: string;
   role: string;
   manager_id?: string;
+  company_id: string;
   hire_date: Date;
   is_active?: boolean;
 }
@@ -35,6 +37,7 @@ export interface UpdateUserData {
   team?: string;
   role?: string;
   manager_id?: string;
+  company_id?: string;
   hire_date?: Date;
   is_active?: boolean;
 }

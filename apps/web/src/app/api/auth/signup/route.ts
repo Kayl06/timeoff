@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { supabase, mapUserToDatabase, mapUserFromDatabase, testSupabaseConnection } from '@/lib/supabase'
+import { supabase, mapUserFromDatabase, testSupabaseConnection } from '@/lib/supabase'
+import { buildCreateCompanyWithOwnerArgs } from '@/lib/create-company-rpc'
 import { devLog } from '@/lib/env'
 import { userRegistrationSchema, validateInput, formatValidationErrors } from '@/lib/validation'
 
@@ -23,11 +24,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { firstName, lastName, email, password, acceptMarketing } = validationResult.data
+    const { companyName, firstName, lastName, email, password } = validationResult.data
     const connectionTest = await testSupabaseConnection()
 
     // Check if user already exists
-    const { data: existingUser, error: checkError } = await supabase
+    const { data: existingUser } = await supabase
       .from('users')
       .select('id')
       .eq('email', email)
@@ -44,35 +45,32 @@ export async function POST(request: NextRequest) {
     const saltRounds = 12
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-    // Create new user
-    const userData = mapUserToDatabase({
-      email,
-      firstName,
-      lastName,
-      password: hashedPassword,
-      department: 'Unassigned',
-      team: 'Unassigned',
-      role: 'employee',
-      hireDate: new Date(),
-      isActive: true,
-      acceptMarketing,
-    })
-
-    const { data: newUser, error: createError } = await supabase
-      .from('users')
-      .insert(userData)
-      .select()
-      .single()
-
-    devLog.info('New user created:', newUser?.id)
+    const { data: newUser, error: createError } = await supabase.rpc(
+      'create_company_with_owner',
+      buildCreateCompanyWithOwnerArgs({
+        email,
+        passwordHash: hashedPassword,
+        firstName,
+        lastName,
+        companyName,
+      })
+    )
 
     if (createError) {
-      devLog.error('Error creating user:', createError)
+      if (createError.code === '23505') {
+        return NextResponse.json(
+          { error: 'User with this email already exists' },
+          { status: 409 }
+        )
+      }
+      devLog.error('Error creating company:', createError)
       return NextResponse.json(
         { error: 'Failed to create user', details: createError.message, connectionTest: connectionTest },
         { status: 500 }
       )
     }
+
+    devLog.info('New company owner created:', newUser?.id)
 
     // Map the user data and remove password from response
     const mappedUser = mapUserFromDatabase(newUser)
@@ -93,4 +91,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-} 
+}

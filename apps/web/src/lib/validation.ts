@@ -48,6 +48,10 @@ const passwordSchema = z.string()
 
 // User registration validation
 export const userRegistrationSchema = z.object({
+  companyName: z.string()
+    .min(1, 'Company name is required')
+    .max(80, 'Company name is too long')
+    .transform(name => name.trim()),
   firstName: nameSchema,
   lastName: nameSchema,
   email: emailSchema,

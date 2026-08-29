@@ -8,15 +8,15 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'react-hot-toast'
-import { Eye, EyeOff, Mail, Lock, User, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, Building2, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
 
 interface FormData {
-  first_name: string
-  last_name: string
+  companyName: string
+  firstName: string
+  lastName: string
   email: string
   password: string
   confirmPassword: string
@@ -25,19 +25,24 @@ interface FormData {
 }
 
 interface ValidationErrors {
-  first_name?: string
-  last_name?: string
+  companyName?: string
+  firstName?: string
+  lastName?: string
   email?: string
   password?: string
   confirmPassword?: string
   acceptTerms?: string
 }
 
+const DUPLICATE_EMAIL_COPY =
+  'An account with this email already exists. Sign in, or ask your admin for an invite.'
+
 export default function SignUpPage() {
   const router = useRouter()
   const [formData, setFormData] = useState<FormData>({
-    first_name: '',
-    last_name: '',
+    companyName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -65,12 +70,18 @@ export default function SignUpPage() {
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {}
 
-    if (!formData.first_name.trim()) {
-      newErrors.first_name = 'First name is required'
+    if (!formData.companyName.trim()) {
+      newErrors.companyName = 'Company name is required'
+    } else if (formData.companyName.trim().length > 80) {
+      newErrors.companyName = 'Company name is too long'
     }
 
-    if (!formData.last_name.trim()) {
-      newErrors.last_name = 'Last name is required'
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required'
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required'
     }
 
     if (!formData.email) {
@@ -98,6 +109,17 @@ export default function SignUpPage() {
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
+
+  const isFormReady =
+    formData.companyName.trim().length > 0 &&
+    formData.companyName.trim().length <= 80 &&
+    formData.firstName.trim().length > 0 &&
+    formData.lastName.trim().length > 0 &&
+    /\S+@\S+\.\S+/.test(formData.email) &&
+    formData.password.length >= 8 &&
+    formData.confirmPassword.length > 0 &&
+    formData.password === formData.confirmPassword &&
+    formData.acceptTerms
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -127,10 +149,12 @@ export default function SignUpPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          first_name: formData.first_name,
-          last_name: formData.last_name,
+          companyName: formData.companyName,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.confirmPassword,
           acceptTerms: formData.acceptTerms,
           acceptMarketing: formData.acceptMarketing,
         }),
@@ -138,11 +162,17 @@ export default function SignUpPage() {
 
       const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create account')
+      if (response.status === 409) {
+        setErrors(prev => ({ ...prev, email: DUPLICATE_EMAIL_COPY }))
+        return
       }
 
-      toast.success('Account created successfully! Please sign in with your new credentials.')
+      if (!response.ok) {
+        toast.error(data.error || 'Failed to create account')
+        return
+      }
+
+      toast.success('Company created. Sign in with your new credentials.')
       router.push('/auth/signin')
     } catch (error) {
       console.error('Signup error:', error)
@@ -193,23 +223,50 @@ export default function SignUpPage() {
         <Card className="backdrop-blur-lg bg-white/80 border-white/20 shadow-2xl">
           <CardHeader className="space-y-1">
             <div className="flex items-center justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-sky-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-primary to-primary rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-xl">TO</span>
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-center text-gray-900">
-              Create your account
+              Create your company
             </CardTitle>
             <CardDescription className="text-center text-gray-600">
-              Join Timeoff and start managing your time off efficiently
+              Enter your company name, then create the owner account. Teammates join by invite only.
             </CardDescription>
           </CardHeader>
           
           <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="companyName" className="text-sm font-medium text-gray-700">
+                Company name
+              </Label>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  id="companyName"
+                  type="text"
+                  autoFocus
+                  autoComplete="organization"
+                  placeholder="Acme Inc."
+                  maxLength={80}
+                  value={formData.companyName}
+                  onChange={(e) => handleInputChange('companyName', e.target.value)}
+                  className={`pl-10 h-12 whitespace-normal break-words ${errors.companyName ? 'border-red-500 focus:border-red-500' : ''}`}
+                  disabled={isLoading}
+                />
+                {errors.companyName && (
+                  <div className="flex items-center mt-1 text-sm text-red-600">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {errors.companyName}
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Google Sign Up */}
             <Button
               onClick={handleGoogleSignUp}
-              disabled={isGoogleLoading}
+              disabled={isLoading || isGoogleLoading}
               variant="outline"
               className="w-full h-12 bg-white hover:bg-gray-50 border-gray-300 text-gray-700 font-medium"
             >
@@ -251,48 +308,48 @@ export default function SignUpPage() {
             <form onSubmit={handleTraditionalSignUp} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="first_name" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">
                     First name
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                      id="first_name"
+                      id="firstName"
                       type="text"
                       placeholder="John"
-                      value={formData.first_name}
-                      onChange={(e) => handleInputChange('first_name', e.target.value)}
-                      className={`pl-10 h-12 ${errors.first_name ? 'border-red-500 focus:border-red-500' : ''}`}
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      className={`pl-10 h-12 ${errors.firstName ? 'border-red-500 focus:border-red-500' : ''}`}
                       disabled={isLoading}
                     />
-                    {errors.first_name && (
+                    {errors.firstName && (
                       <div className="flex items-center mt-1 text-sm text-red-600">
                         <AlertCircle className="w-4 h-4 mr-1" />
-                        {errors.first_name}
+                        {errors.firstName}
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="last_name" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">
                     Last name
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     <Input
-                      id="last_name"
+                      id="lastName"
                       type="text"
                       placeholder="Doe"
-                      value={formData.last_name}
-                      onChange={(e) => handleInputChange('last_name', e.target.value)}
-                      className={`pl-10 h-12 ${errors.last_name ? 'border-red-500 focus:border-red-500' : ''}`}
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      className={`pl-10 h-12 ${errors.lastName ? 'border-red-500 focus:border-red-500' : ''}`}
                       disabled={isLoading}
                     />
-                    {errors.last_name && (
+                    {errors.lastName && (
                       <div className="flex items-center mt-1 text-sm text-red-600">
                         <AlertCircle className="w-4 h-4 mr-1" />
-                        {errors.last_name}
+                        {errors.lastName}
                       </div>
                     )}
                   </div>
@@ -311,7 +368,7 @@ export default function SignUpPage() {
                     placeholder="john.doe@company.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`pl-10 h-12 ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
+                    className={`pl-10 h-12 overflow-x-auto whitespace-nowrap ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
                     disabled={isLoading}
                   />
                   {errors.email && (
@@ -343,6 +400,7 @@ export default function SignUpPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     disabled={isLoading}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -413,6 +471,7 @@ export default function SignUpPage() {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     disabled={isLoading}
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                   >
                     {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -476,16 +535,16 @@ export default function SignUpPage() {
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-700 hover:to-sky-700 text-white font-medium"
-                disabled={isLoading}
+                className="w-full h-12 bg-gradient-to-r from-primary to-primary hover:from-primary hover:to-primary text-white font-medium"
+                disabled={isLoading || !isFormReady}
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating account...
+                    Creating company...
                   </>
                 ) : (
-                  'Create account'
+                  'Create company'
                 )}
               </Button>
             </form>
@@ -507,4 +566,4 @@ export default function SignUpPage() {
       </div>
     </div>
   )
-} 
+}

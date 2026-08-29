@@ -9,6 +9,7 @@ export interface User {
   team: string;
   role: UserRole;
   manager_id?: string;
+  company_id: string;
   hire_date: Date;
   is_active: boolean;
   created_at: Date;
