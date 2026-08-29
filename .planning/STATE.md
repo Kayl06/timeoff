@@ -2,17 +2,17 @@
 gsd_state_version: 1.0
 current_phase: 03
 current_phase_name: Live Remaining Days
-status: verifying
-stopped_at: Phase 3 UI-SPEC approved
-last_updated: "2026-08-29T16:54:44.360Z"
-last_activity: 2026-08-29
-last_activity_desc: v1 milestone audit — 8/27 satisfied; Phases 3–7 not started
-state_head: f1c00f5b07b444e839120345df53fb06128d95d6
+status: executing
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-08-29T17:01:36.748Z"
+last_activity: 2026-08-30
+last_activity_desc: Phase 03 execution started
+state_head: 3a4483abcd7ad9363efbc42084f448c1886a982a
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 20
-  completed_plans: 16
+  completed_plans: 17
   percent: 29
 ---
 
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-29)
 
 **Core value:** A client company can run request → approve → remaining days → calendar on their own data, with no SQL from us, and no other company on the same deployment can see it.
-**Current focus:** Phase 2 — Tenant Isolation and Server Authz
+**Current focus:** Phase 03 — Live Remaining Days
 
 ## Current Position
 
-Phase: 03 (Live Remaining Days) — READY TO EXECUTE
-Plan: 7 of 7
-Status: UAT complete (5/5); security verified; Nyquist-compliant; milestone audit gaps_found (8/27)
-Last activity: 2026-08-29 — /gsd-audit-milestone (do not complete v1 yet)
+Phase: 03 (Live Remaining Days) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-08-30 — Phase 03 execution started
 
-Progress: [█░░░░░░░░░] 14%
+Progress: [███░░░░░░░] 29%
 
 ## Performance Metrics
 
@@ -74,6 +74,7 @@ Progress: [█░░░░░░░░░] 14%
 | Phase 02-tenant-isolation-and-server-authz P05 | 2 min | 3 tasks | 7 files |
 | Phase 02-tenant-isolation-and-server-authz P07 | 2 min | 3 tasks | 7 files |
 | Phase 02-tenant-isolation-and-server-authz P06 | 5 min | 3 tasks | 2 files |
+| Phase 03-live-remaining-days P01 | 3 min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,10 @@ Recent decisions affecting current work:
 - [Phase 02-tenant-isolation-and-server-authz]: Child isolation stays EXISTS through users.company_id; no company_id columns on leave/balances/notifications/audit/calendar
 - [Phase 02-tenant-isolation-and-server-authz]: Catalog departments/teams/leave_policies get authenticated SELECT USING (true) this phase (A2); tenant tables do not
 - [Phase 02-tenant-isolation-and-server-authz]: calendar_events with null user_id remain visible to authenticated tenants
+- [Phase 03]: Compare leave_type string values (vacation, sick, personal), not LeaveType enum keys
+- [Phase 03]: Missing is_active on a policy fixture is treated as inactive
+- [Phase 03]: Multiple active policies for one type: sort by name, take index 0
+- [Phase 03]: planDefaultBalanceInserts is a pure function; no database client import
 
 ### Pending Todos
 
@@ -149,6 +154,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T16:39:52.171Z
-Stopped at: Phase 3 UI-SPEC approved
-Resume file: /Users/kaylrabanzo/Desktop/chykalophia/timeoff/.planning/phases/03-live-remaining-days/03-UI-SPEC.md
+Last session: 2026-08-29T17:01:36.072Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: None
