@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 01
 current_phase_name: Company Signup and Invites
 status: executing
-stopped_at: Completed 01-07-PLAN.md
-last_updated: "2026-08-29T11:26:57.997Z"
+stopped_at: Completed 01-08-PLAN.md
+last_updated: "2026-08-29T11:31:09.477Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 01 execution started
-state_head: 94b7ff41e2141ba270368c2f13d3f00a48f455ec
+state_head: 9ed578391691b881c315c0568ef80b84193100d2
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 01 (Company Signup and Invites) — EXECUTING
-Plan: 8 of 9
+Plan: 9 of 9
 Status: Completed 01-07; ready for 01-08
 Last activity: 2026-08-29 — Completed 01-07-PLAN.md
 
@@ -65,6 +65,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01-company-signup-and-invites P05 | 4 min | 3 tasks | 8 files |
 | Phase 01-company-signup-and-invites P06 | 2 min | 2 tasks | 4 files |
 | Phase 01-company-signup-and-invites P07 | 2 min | 2 tasks | 4 files |
+| Phase 01-company-signup-and-invites P08 | 2 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 01]: POST users lookup is email-only; pending invites stay company-scoped
 - [Phase 01]: EMAIL_EXISTS_ERROR matches signup duplicate copy; never leak other company id
 - [Phase 01]: Did not drop users.email UNIQUE; closed the 201-unredeemable path instead
+- [Phase 01]: Preview users lookup is email-only after usability; select id so company_id never enters JSON
+- [Phase 01]: Reused EMAIL_EXISTS_ERROR from invite-auth; 409 never leaks other company identity
+- [Phase 01]: Credentials accept 409 (not mismatch) sets exists; sonner toast without a second Toaster
 
 ### Pending Todos
 
@@ -114,6 +118,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T11:26:57.813Z
-Stopped at: Completed 01-07-PLAN.md
+Last session: 2026-08-29T11:31:09.316Z
+Stopped at: Completed 01-08-PLAN.md
 Resume file: None

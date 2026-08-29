@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. An invitee joins that company and cannot see any other company
   4. Google sign-in does not place a user in the wrong company or a global employee pool
 
-**Plans**: 7/9 plans executed (4 gap-closure pending)
+**Plans**: 8/9 plans executed (4 gap-closure pending)
 Plans:
 **Wave 1**
 
@@ -65,7 +65,7 @@ Plans:
 
 **Wave 7** *(blocked on 01-07)*
 
-- [ ] 01-08-PLAN.md — Preview existing-account before join form (G-01-4)
+- [x] 01-08-PLAN.md — Preview existing-account before join form (G-01-4)
 
 **Wave 8** *(blocked on 01-08)*
 
@@ -170,7 +170,7 @@ Phase 6 depends only on Phase 2 (authz + tenant exist; remaining-days and leave 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Company Signup and Invites | 7/9 | In Progress|  |
+| 1. Company Signup and Invites | 8/9 | In Progress|  |
 | 2. Tenant Isolation and Server Authz | 0/TBD | Not started | - |
 | 3. Live Remaining Days | 0/TBD | Not started | - |
 | 4. Approve Reject Cancel Side Effects | 0/TBD | Not started | - |
