@@ -1,12 +1,40 @@
+'use client'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useDatabaseService } from '@/providers/database-provider'
-// import { useToast } from '@/hooks/use-toast'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
 interface UseLeaveRequestOperationsProps {
   userId: string
   onSuccess?: () => void
+}
+
+async function patchLeaveRequest(id: string, body: Record<string, unknown>) {
+  const response = await fetch(`/api/leave-requests/${id}`, {
+    method: 'PATCH',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to update leave request')
+  }
+  return payload
+}
+
+async function postLeaveRequestBulk(ids: string[], action: 'approve' | 'reject') {
+  const response = await fetch('/api/leave-requests/bulk', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids, action }),
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to update leave requests')
+  }
+  return payload
 }
 
 export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequestOperationsProps): {
@@ -25,14 +53,12 @@ export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequest
   rowSelection: Record<string, boolean>
   setRowSelection: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
 } {
-  const databaseService = useDatabaseService()
   const queryClient = useQueryClient()
-  // const { toast } = useToast()
   const [rowSelection, setRowSelection] = useState({})
 
   // Delete leave request
   const { mutateAsync: deleteLeaveRequest, isPending: isDeletingLeaveRequest } = useMutation({
-    mutationFn: (id: string) => databaseService.deleteLeaveRequest(id),
+    mutationFn: (id: string) => patchLeaveRequest(id, { action: 'delete' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentRequests', userId] })
       queryClient.invalidateQueries({ queryKey: ['leaveBalance', userId] })
@@ -50,7 +76,7 @@ export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequest
 
   // Cancel leave request
   const { mutateAsync: cancelLeaveRequest, isPending: isCancellingLeaveRequest } = useMutation({
-    mutationFn: (id: string) => databaseService.cancelLeaveRequest(id),
+    mutationFn: (id: string) => patchLeaveRequest(id, { action: 'cancel' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentRequests', userId] })
       queryClient.invalidateQueries({ queryKey: ['personalLeaveRequests', userId] })
@@ -64,7 +90,7 @@ export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequest
   // Approve leave request
   const { mutateAsync: approveLeaveRequest, isPending: isApprovingLeaveRequest } = useMutation({
     mutationFn: ({ id, comments }: { id: string, comments?: string }) =>
-      databaseService.approveLeaveRequest(id, userId, comments),
+      patchLeaveRequest(id, { action: 'approve', comments }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentRequests', userId] })
       queryClient.invalidateQueries({ queryKey: ['teamLeaveRequests'] })
@@ -81,7 +107,7 @@ export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequest
   // Reject leave request
   const { mutateAsync: rejectLeaveRequest, isPending: isRejectingLeaveRequest } = useMutation({
     mutationFn: ({ id, reason }: { id: string, reason: string }) =>
-      databaseService.rejectLeaveRequest(id, userId, reason),
+      patchLeaveRequest(id, { action: 'reject', reason }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentRequests', userId] })
       queryClient.invalidateQueries({ queryKey: ['teamLeaveRequests'] })
@@ -97,12 +123,7 @@ export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequest
 
   // Bulk approve
   const { mutateAsync: bulkApprove, isPending: isBulkApproving } = useMutation({
-    mutationFn: (ids: string[]) =>
-      databaseService.bulkUpdateLeaveRequests(ids, {
-        status: 'approved',
-        approver_id: userId,
-        approved_at: new Date()
-      }),
+    mutationFn: (ids: string[]) => postLeaveRequestBulk(ids, 'approve'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentRequests', userId] })
       queryClient.invalidateQueries({ queryKey: ['teamLeaveRequests'] })
@@ -119,12 +140,7 @@ export function useLeaveRequestOperations({ userId, onSuccess }: UseLeaveRequest
 
   // Bulk reject
   const { mutateAsync: bulkReject, isPending: isBulkRejecting } = useMutation({
-    mutationFn: (ids: string[]) =>
-      databaseService.bulkUpdateLeaveRequests(ids, {
-        status: 'rejected',
-        approver_id: userId,
-        rejected_at: new Date()
-      }),
+    mutationFn: (ids: string[]) => postLeaveRequestBulk(ids, 'reject'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recentRequests', userId] })
       queryClient.invalidateQueries({ queryKey: ['teamLeaveRequests'] })
