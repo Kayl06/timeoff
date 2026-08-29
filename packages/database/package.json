@@ -9,7 +9,7 @@
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types src/modules/leave-balances/plan-default-inserts.test.ts",
+    "test": "node --test --experimental-strip-types src/modules/leave-balances/plan-default-inserts.test.ts src/modules/leave-balances/balance-arithmetic.test.ts src/modules/leave-balances/year-from-start-date.test.ts",
     "generate-types": "supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > src/types.ts",
     "migrate": "node ../../scripts/run-migration.js && npm run generate-types"
   },
