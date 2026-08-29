@@ -80,6 +80,21 @@ export const inviteEmailSchema = z.object({
   email: emailSchema,
 })
 
+/** Credentials accept: no email or company id — those come from the invite row. */
+export const inviteAcceptSchema = z.object({
+  token: z.string().min(1, 'Invite token is required'),
+  firstName: nameSchema,
+  lastName: nameSchema,
+  password: passwordSchema,
+  confirmPassword: z.string(),
+}).refine(
+  (data) => data.password === data.confirmPassword,
+  {
+    message: "Passwords don't match",
+    path: ["confirmPassword"]
+  }
+)
+
 /** Pending Google OAuth context: company name or invite token (httpOnly cookie payload). */
 export const pendingContextSchema = z.discriminatedUnion('kind', [
   z.object({
@@ -184,6 +199,7 @@ export const dateRangeSchema = z.object({
 export type UserRegistrationInput = z.infer<typeof userRegistrationSchema>
 export type UserSignInInput = z.infer<typeof userSignInSchema>
 export type InviteEmailInput = z.infer<typeof inviteEmailSchema>
+export type InviteAcceptInput = z.infer<typeof inviteAcceptSchema>
 export type PendingContextInput = z.infer<typeof pendingContextSchema>
 export type LeaveRequestInput = z.infer<typeof leaveRequestSchema>
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>
