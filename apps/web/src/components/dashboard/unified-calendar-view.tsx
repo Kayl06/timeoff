@@ -10,8 +10,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CalendarIcon, Users, Clock, CheckCircle, XCircle, AlertCircle, User, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { useDatabaseService } from '@/providers/database-provider'
 import { LeaveRequest, LeaveType, RequestStatus, User as UserType } from '@timeoff/types'
+
+async function fetchCalendarLeaveRequests(scope: 'own' | 'team' | 'all'): Promise<LeaveRequest[]> {
+  const response = await fetch(`/api/calendar/leave-requests?scope=${scope}`, {
+    credentials: 'include',
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to load calendar leave requests')
+  }
+  return payload as LeaveRequest[]
+}
 import { format, isSameDay, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths, startOfWeek, endOfWeek, isSameMonth, isToday } from 'date-fns'
 import { CalendarLegend } from '../shared/calendar/calendar-legend'
 import { CalendarGrid } from '../shared/calendar/calendar-grid'
@@ -93,8 +103,6 @@ const getLeaveTypeColor = (leaveType: LeaveType) => {
 
 
 export function UnifiedCalendarView({ user, className, filterOn = true, isCalendarOnly = false, showLegend = true, legendType = 'vertical', legendPosition = 'right', previewOnDayClick = true, eventVariant = 'default', calendarVariant = 'default', cardView = true }: UnifiedCalendarViewProps) {
-  const databaseService = useDatabaseService()
-
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date())
   const [statusFilter, setStatusFilter] = useState<RequestStatus | 'all'>('all')
@@ -107,7 +115,7 @@ export function UnifiedCalendarView({ user, className, filterOn = true, isCalend
   // Fetch user's leave requests
   const { data: personalRequests, isLoading: personalLoading } = useQuery({
     queryKey: ['personalLeaveRequests', user.id],
-    queryFn: () => databaseService.getLeaveRequestsByUser(user.id),
+    queryFn: () => fetchCalendarLeaveRequests('own'),
     enabled: !!user?.id
   })
 
@@ -118,11 +126,9 @@ export function UnifiedCalendarView({ user, className, filterOn = true, isCalend
     queryKey: ['teamLeaveRequests', user.id],
     queryFn: () => {
       if (user.role === 'admin' || user.role === 'hr') {
-        return databaseService.getAllLeaveRequests()
-      } else if (isManager) {
-        return databaseService.getTeamLeaveRequests(user.id, user.department)
+        return fetchCalendarLeaveRequests('all')
       }
-      return []
+      return fetchCalendarLeaveRequests('team')
     },
     enabled: isManager && !!user?.id
   })

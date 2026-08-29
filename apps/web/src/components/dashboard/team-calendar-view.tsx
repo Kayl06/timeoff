@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CalendarIcon, Users, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { useDatabaseService } from '@/providers/database-provider'
 import { LeaveRequest, LeaveType, RequestStatus, User } from '@timeoff/types'
 import { format, isSameDay, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns'
 import { ViewLeaveRequestDialog } from './view-leave-request-dialog'

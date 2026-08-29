@@ -9,8 +9,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { CalendarIcon, Filter, Eye, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { useDatabaseService } from '@/providers/database-provider'
 import { LeaveRequest, LeaveType, RequestStatus, User } from '@timeoff/types'
+
+async function fetchCalendarLeaveRequests(): Promise<LeaveRequest[]> {
+  const response = await fetch('/api/calendar/leave-requests?scope=own', {
+    credentials: 'include',
+  })
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) {
+    throw new Error(payload.error || 'Failed to load calendar leave requests')
+  }
+  return payload as LeaveRequest[]
+}
 import { format, isSameDay, isWithinInterval, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns'
 
 interface LeaveCalendarViewProps {
@@ -75,8 +85,6 @@ const getStatusIcon = (status: RequestStatus) => {
 }
 
 export function LeaveCalendarView({ user, className }: LeaveCalendarViewProps) {
-  const databaseService = useDatabaseService()
-  
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date())
   const [statusFilter, setStatusFilter] = useState<RequestStatus | 'all'>('all')
@@ -86,7 +94,7 @@ export function LeaveCalendarView({ user, className }: LeaveCalendarViewProps) {
   // Fetch all leave requests for the current user
   const { data: leaveRequests, isLoading } = useQuery({
     queryKey: ['leaveRequests', user.id],
-    queryFn: () => databaseService.getLeaveRequestsByUser(user.id),
+    queryFn: () => fetchCalendarLeaveRequests(),
   })
 
   // Filter requests based on selected filters

@@ -17,7 +17,6 @@ import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/lib/utils'
-import { useDatabaseService } from '@/providers/database-provider'
 import { useQuery } from '@tanstack/react-query'
 import { leaveRequestSchema, type LeaveRequestInput } from '@/lib/validation'
 
@@ -29,7 +28,6 @@ interface LeaveRequestFormProps {
 export function LeaveRequestForm({ onSubmit, isLoading = false }: LeaveRequestFormProps) {
   const { toast } = useToast()
   const [isOpen, setIsOpen] = useState(false)
-  const databaseService = useDatabaseService()
 
   const form = useForm<LeaveRequestInput>({
     resolver: zodResolver(leaveRequestSchema),
@@ -54,7 +52,14 @@ export function LeaveRequestForm({ onSubmit, isLoading = false }: LeaveRequestFo
 
   const { data: leavePolicies, isLoading: isLoadingLeavePolicies } = useQuery({
     queryKey: ['leave-policies'],
-    queryFn: () => databaseService.getLeavePolicies(),
+    queryFn: async () => {
+      const response = await fetch('/api/leave-policies', { credentials: 'include' })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to load leave policies')
+      }
+      return payload as Array<{ leave_type: string; name: string }>
+    },
     enabled: isOpen,
   })
 
