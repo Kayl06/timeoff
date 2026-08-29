@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 1
 current_phase_name: Company Signup and Invites
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-08-29T09:15:25.557Z"
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-08-29T09:21:36.298Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 1 execution started
-state_head: 9c26bc5db75cbe308b0b6fa6d37a3baffb62e044
+state_head: 45f0d5a13e45e5ef8c57f474511499e6b860880d
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 1 (Company Signup and Invites) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 1 execution started
 
@@ -60,6 +60,7 @@ Progress: [░░░░░░░░░░] 0%
 |------|----------|-------|-------|
 | Phase 01-company-signup-and-invites P01 | 2 min | 3 tasks | 7 files |
 | Phase 01 P02 | 17 min | 3 tasks | 11 files |
+| Phase 01 P03 | 4 min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -76,6 +77,8 @@ Recent decisions affecting current work:
 - [Phase 01]: hashInviteTokenHex is the only persistence/lookup form for company_invites.token_hash (64 lowercase hex)
 - [Phase 01]: option-a: companies.owner_id + users.company_id NOT NULL + create_company_with_owner
 - [Phase 01]: Applied companies schema to local Supabase; hosted project still needs database password to link and push
+- [Phase 1]: Deny-until-01-05: unknown Google with pending invite cookie returns InviteRequired (no global employee insert)
+- [Phase 1]: Pending Google context uses Next 14 sync cookies(); company name never in OAuth state or authorizationParams
 
 ### Pending Todos
 
@@ -96,6 +99,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T09:15:25.546Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-08-29T09:21:36.286Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
