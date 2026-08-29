@@ -2,6 +2,9 @@ import { DatabaseClient } from '../shared/types';
 import { DatabaseUtils } from '../shared/utils';
 import { User, CreateUserData, UpdateUserData, UserFilters, UserStats } from './types';
 
+const USER_DOMAIN_COLUMNS =
+  'id, email, first_name, last_name, avatar, department, team, role, manager_id, company_id, hire_date, is_active, created_at, updated_at';
+
 export class UserRepository {
   constructor(private db: DatabaseClient) {}
 
@@ -9,7 +12,7 @@ export class UserRepository {
     try {
       const { data, error } = await this.db
         .from('users')
-        .select('*')
+        .select(USER_DOMAIN_COLUMNS)
         .eq('id', id)
         .single();
 
@@ -37,7 +40,7 @@ export class UserRepository {
 
   async findAll(filters?: UserFilters): Promise<User[]> {
     try {
-      let query = this.db.from('users').select('*');
+      let query = this.db.from('users').select(USER_DOMAIN_COLUMNS);
 
       if (filters) {
         query = DatabaseUtils.applyFilters(query, filters);
@@ -107,7 +110,7 @@ export class UserRepository {
     try {
       const { data, error } = await this.db
         .from('users')
-        .select('*')
+        .select(USER_DOMAIN_COLUMNS)
         .eq('manager_id', managerId)
         .eq('is_active', true)
         .order('first_name');
