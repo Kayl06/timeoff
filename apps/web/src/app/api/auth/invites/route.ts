@@ -5,10 +5,9 @@ import { supabase } from '@/lib/supabase'
 import { env, devLog } from '@/lib/env'
 import { inviteEmailSchema, validateInput, formatValidationErrors } from '@/lib/validation'
 import { generateInviteToken, hashInviteTokenHex } from '@/lib/invite-token'
-import { inviteOwnerRejectStatus } from '@/lib/invite-auth'
+import { inviteCreateConflict, inviteOwnerRejectStatus } from '@/lib/invite-auth'
 
 const OWNER_INVITE_ERROR = 'Only the company owner can invite teammates.'
-const ALREADY_IN_COMPANY_ERROR = 'That email is already in this company.'
 const INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000
 
 type CompanyRow = { id: string; name: string; owner_id: string }
@@ -139,9 +138,8 @@ export async function POST(request: NextRequest) {
 
     const { data: existingUser, error: userLookupError } = await supabase
       .from('users')
-      .select('id')
+      .select('id, company_id')
       .eq('email', email)
-      .eq('company_id', company.id)
       .maybeSingle()
 
     if (userLookupError) {
@@ -160,8 +158,13 @@ export async function POST(request: NextRequest) {
       throw inviteLookupError
     }
 
-    if (existingUser || existingInvite) {
-      return NextResponse.json({ error: ALREADY_IN_COMPANY_ERROR }, { status: 409 })
+    const conflict = inviteCreateConflict({
+      existingUserCompanyId: (existingUser as { company_id?: string } | null)?.company_id,
+      ownerCompanyId: company.id,
+      pendingInviteInCompany: Boolean(existingInvite),
+    })
+    if (conflict) {
+      return NextResponse.json({ error: conflict }, { status: 409 })
     }
 
     const rawToken = generateInviteToken()
