@@ -214,7 +214,7 @@ export default function SignInPage() {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`pl-10 h-12 ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
+                    className={`pl-10 h-12 overflow-x-auto whitespace-nowrap ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
                     disabled={isLoading}
                   />
                 </div>
@@ -307,7 +307,7 @@ export default function SignInPage() {
               <Button
                 type="submit"
                 className="w-full h-12 bg-gradient-to-r from-primary to-primary hover:from-primary hover:to-primary text-white font-medium"
-                disabled={isLoading}
+                disabled={isLoading || !formData.email || !formData.password}
               >
                 {isLoading ? (
                   <>
@@ -320,18 +320,18 @@ export default function SignInPage() {
               </Button>
             </form>
 
-            {/* <div className="text-center">
+            <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
+                Don’t have a company yet?{' '}
                 <Button
                   variant="link"
                   className="text-primary hover:text-blue-700 p-0 h-auto font-medium"
                   onClick={() => router.push('/auth/signup')}
                 >
-                  Sign up
+                  Create a company
                 </Button>
               </p>
-            </div> */}
+            </div>
           </CardContent>
         </Card>
       </div>

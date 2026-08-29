@@ -183,9 +183,33 @@ export default function SignUpPage() {
   }
 
   const handleGoogleSignUp = async () => {
+    const companyName = formData.companyName.trim()
+    if (!companyName) {
+      setErrors(prev => ({
+        ...prev,
+        companyName: 'Enter a company name before continuing with Google.',
+      }))
+      toast.error('Enter a company name before continuing with Google.')
+      return
+    }
+
     setIsGoogleLoading(true)
-    
+
     try {
+      const response = await fetch('/api/auth/pending-context', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ kind: 'company', companyName }),
+      })
+
+      if (!response.ok) {
+        toast.error('Enter a company name before continuing with Google.')
+        setIsGoogleLoading(false)
+        return
+      }
+
       await signIn('google', { callbackUrl: '/dashboard' })
     } catch (error) {
       toast.error('An error occurred during Google sign up')
