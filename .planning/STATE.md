@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 current_phase: 04
 current_phase_name: Approve Reject Cancel Side Effects
 status: paused
-stopped_at: Phase 4 paused mid 04-02 sendMail adapter
-last_updated: "2026-08-29T17:53:00.379Z"
+stopped_at: Phase 4 paused after Wave 1; next is 04-03
+last_updated: "2026-08-29T17:55:30.000Z"
 last_activity: 2026-08-30
-last_activity_desc: Paused — 04-01 complete, 04-02 task 2 in progress
+last_activity_desc: Paused — 04-01 and 04-02 complete; 04-03 not started
 state_head: 2bd804e1aac757e4cd38df77671493f2a84fadaf
 progress:
   total_phases: 7
@@ -23,13 +23,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-29)
 
 **Core value:** A client company can run request → approve → remaining days → calendar on their own data, with no SQL from us, and no other company on the same deployment can see it.
-**Current focus:** Phase 04 — Approve Reject Cancel Side Effects (paused mid 04-02)
+**Current focus:** Phase 04 — Approve Reject Cancel Side Effects (paused after Wave 1; next 04-03)
 
 ## Current Position
 
 Phase: 04 (Approve Reject Cancel Side Effects) — PAUSED
-Plan: 2 of 4
-Status: 04-01 complete; 04-02 task 2 (sendMail) in progress
+Plan: 3 of 4
+Status: Wave 1 complete (04-01, 04-02); next 04-03
 Last activity: 2026-08-30 — /gsd-pause-work
 Resume file: .planning/phases/04-approve-reject-cancel-side-effects/.continue-here.md
 
@@ -167,5 +167,5 @@ Items acknowledged and deferred at milestone close, most recent first:
 ## Session Continuity
 
 Last session: 2026-08-29T17:53:00.379Z
-Stopped at: Phase 4 paused mid 04-02 sendMail adapter
+Stopped at: Phase 4 paused after Wave 1; next is 04-03
 Resume file: .planning/phases/04-approve-reject-cancel-side-effects/.continue-here.md
