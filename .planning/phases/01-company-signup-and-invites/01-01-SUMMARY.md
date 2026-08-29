@@ -127,7 +127,7 @@ Each task was committed atomically (TDD RED then GREEN):
 5. **Task 3 RED: failing company-owner tests** - `ce4b67b` (test)
 6. **Task 3 GREEN: company owner predicate** - `2c46dd6` (feat)
 
-**Plan metadata:** pending docs commit after this file
+**Plan metadata:** `c1794f5` (docs: complete plan)
 
 _Note: TDD tasks have multiple commits (test → feat)_
 
