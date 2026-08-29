@@ -8,7 +8,8 @@ interface EnvironmentConfig {
   // Supabase Configuration
   NEXT_PUBLIC_SUPABASE_URL: string
   NEXT_PUBLIC_SUPABASE_ANON_KEY: string
-  SUPABASE_SERVICE_ROLE_KEY?: string
+  SUPABASE_SERVICE_ROLE_KEY: string
+  SUPABASE_JWT_SECRET: string
   
   // NextAuth Configuration
   NEXTAUTH_URL: string
@@ -32,7 +33,9 @@ function validateEnvironment(): EnvironmentConfig {
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
     'NEXTAUTH_URL',
-    'NEXTAUTH_SECRET'
+    'NEXTAUTH_SECRET',
+    'SUPABASE_JWT_SECRET',
+    'SUPABASE_SERVICE_ROLE_KEY',
   ] as const
 
   // Required in production, optional in development
@@ -65,11 +68,6 @@ function validateEnvironment(): EnvironmentConfig {
     } else if (config.NODE_ENV === 'production') {
       missingVars.push(varName)
     }
-  }
-
-  // Add optional variables
-  if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    config.SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
   }
 
   // Throw error if any required variables are missing

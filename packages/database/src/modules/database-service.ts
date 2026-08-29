@@ -24,6 +24,11 @@ export class DatabaseServiceFactory {
     return DatabaseServiceFactory.instance;
   }
 
+  /** Always construct a new factory bound to this client. Use for per-request tenant BFF. */
+  static create(db: DatabaseClient): DatabaseServiceFactory {
+    return new DatabaseServiceFactory(db);
+  }
+
   private initializeServices(): void {
     // Initialize repositories
     const userRepository = new UserRepository(this.db);

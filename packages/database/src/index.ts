@@ -296,7 +296,7 @@ export class DatabaseService implements IDatabaseService {
   private serviceFactory: DatabaseServiceFactory;
 
   constructor(private supabaseClient: typeof supabase) {
-    this.serviceFactory = DatabaseServiceFactory.getInstance(supabaseClient);
+    this.serviceFactory = DatabaseServiceFactory.create(supabaseClient);
   }
 
   // User management
