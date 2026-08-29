@@ -27,7 +27,7 @@ export class UserRepository {
     try {
       const { data, error } = await this.db
         .from('users')
-        .select('*')
+        .select(USER_DOMAIN_COLUMNS)
         .eq('email', email)
         .single();
 
@@ -65,7 +65,7 @@ export class UserRepository {
       const { data, error } = await this.db
         .from('users')
         .insert(sanitizedData)
-        .select()
+        .select(USER_DOMAIN_COLUMNS)
         .single();
 
       if (error) throw error;
@@ -83,7 +83,7 @@ export class UserRepository {
         .from('users')
         .update(sanitizedUpdates)
         .eq('id', id)
-        .select()
+        .select(USER_DOMAIN_COLUMNS)
         .single();
 
       if (error) throw error;
