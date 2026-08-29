@@ -9,8 +9,10 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { Eye, EyeOff, Lock, User, AlertCircle, CheckCircle, Loader2, ArrowLeft } from 'lucide-react'
+import { EMAIL_EXISTS_ERROR } from '@/lib/invite-auth'
+import { mergeSignupFieldErrors } from '@/lib/password-client'
 
 const INVALID_COPY = 'This invite is invalid or has expired. Ask your admin to send a new invite.'
 const MISMATCH_COPY = 'This invite was sent to a different email. Sign in with that address, or ask your admin for a new invite.'
@@ -29,7 +31,7 @@ interface ValidationErrors {
   confirmPassword?: string
 }
 
-type PageState = 'resolving' | 'invalid' | 'mismatch' | 'ready'
+type PageState = 'resolving' | 'invalid' | 'mismatch' | 'exists' | 'ready'
 
 function AuthCardChrome({ children }: { children: React.ReactNode }) {
   return (
@@ -96,7 +98,13 @@ function AcceptInviteContent() {
   const queryError = searchParams.get('error')
 
   const [pageState, setPageState] = useState<PageState>(
-    queryError === 'mismatch' ? 'mismatch' : token ? 'resolving' : 'invalid'
+    queryError === 'mismatch'
+      ? 'mismatch'
+      : queryError === 'exists'
+        ? 'exists'
+        : token
+          ? 'resolving'
+          : 'invalid'
   )
   const [companyName, setCompanyName] = useState('')
   const [invitedEmail, setInvitedEmail] = useState('')
@@ -118,6 +126,10 @@ function AcceptInviteContent() {
       setPageState('mismatch')
       return
     }
+    if (queryError === 'exists') {
+      setPageState('exists')
+      return
+    }
     if (!token) {
       setPageState('invalid')
       return
@@ -133,6 +145,10 @@ function AcceptInviteContent() {
         if (cancelled) return
         if (response.status === 404) {
           setPageState('invalid')
+          return
+        }
+        if (response.status === 409) {
+          setPageState('exists')
           return
         }
         const data = await response.json()
@@ -250,12 +266,16 @@ function AcceptInviteContent() {
       }
 
       if (response.status === 409) {
-        toast.error(data.error || 'An account with this email already exists.')
+        setPageState('exists')
         return
       }
 
       if (!response.ok) {
-        toast.error(data.error || 'Failed to join company')
+        const fieldErrors = mergeSignupFieldErrors(data.details)
+        setErrors(prev => ({ ...prev, ...fieldErrors }))
+        if (Object.keys(fieldErrors).length === 0) {
+          toast.error(data.error || 'Failed to join company')
+        }
         return
       }
 
@@ -338,6 +358,10 @@ function AcceptInviteContent() {
 
   if (pageState === 'mismatch') {
     return <InviteStatusCard copy={MISMATCH_COPY} />
+  }
+
+  if (pageState === 'exists') {
+    return <InviteStatusCard copy={EMAIL_EXISTS_ERROR} />
   }
 
   return (
