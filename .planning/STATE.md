@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: executing
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-08-29T13:34:16.521Z"
+stopped_at: Completed 02-05-PLAN.md
+last_updated: "2026-08-29T13:50:01.794Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 2 execution started
-state_head: f3e11e067a0213a0d384cd1356341a2200b105c9
+state_head: 7f0e1016670998c774b102ae9d8a9bb29fc58c7d
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 13
+  completed_plans: 14
   percent: 14
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 2 (Tenant Isolation and Server Authz) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 2 execution started
 
@@ -71,6 +71,7 @@ Progress: [█░░░░░░░░░] 14%
 | Phase 02-tenant-isolation-and-server-authz P02 | 4 min | 3 tasks | 8 files |
 | Phase 02-tenant-isolation-and-server-authz P03 | 2 min | 2 tasks | 4 files |
 | Phase 02-tenant-isolation-and-server-authz P04 | 2 min | 2 tasks | 9 files |
+| Phase 02-tenant-isolation-and-server-authz P05 | 2 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -118,6 +119,8 @@ Recent decisions affecting current work:
 - [Phase 2]: Leave list scope is resolved from session.user.role; client scope=all is ignored for employees and supervisors
 - [Phase 2]: PATCH notifications takes id from query or body but only marks read if the row is in getNotificationsByUser(session.user.id)
 - [Phase 2]: GET /api/manager-team-stats uses session.user.id as managerId and returns 403 for employee
+- [Phase 02-tenant-isolation-and-server-authz]: Identity uses service_role with persistSession false; tenant leave BFF stays on minted authenticated JWT — service_role bypasses RLS; only identity routes may use it
+- [Phase 02-tenant-isolation-and-server-authz]: GET /api/test-connection returns env SET/NOT SET only; no users rows and no testSupabaseConnection — Unauthenticated diagnostics must not dump people before 02-06 REVOKE
 
 ### Pending Todos
 
@@ -138,6 +141,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T13:34:16.376Z
-Stopped at: Completed 02-04-PLAN.md
+Last session: 2026-08-29T13:49:50.343Z
+Stopped at: Completed 02-05-PLAN.md
 Resume file: None
