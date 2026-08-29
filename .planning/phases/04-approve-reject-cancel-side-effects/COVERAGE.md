@@ -55,6 +55,32 @@
 | webhooks.get | OPT-OUT | not needed — no webhook admin |
 | webhooks.update | OPT-OUT | not needed — no webhook admin |
 | webhooks.remove | OPT-OUT | not needed — no webhook admin |
+| automations.create | OPT-OUT | not needed — no workflow automations this phase |
+| automations.list | OPT-OUT | not needed — no workflow automations this phase |
+| automations.get | OPT-OUT | not needed — no workflow automations this phase |
+| automations.update | OPT-OUT | not needed — no workflow automations this phase |
+| automations.remove | OPT-OUT | not needed — no workflow automations this phase |
+| automations.duplicate | OPT-OUT | not needed — no workflow automations this phase |
+| automations.stop | OPT-OUT | not needed — no workflow automations this phase |
+| contactProperties.create | OPT-OUT | not needed — no Resend contact property admin |
+| contactProperties.list | OPT-OUT | not needed — no Resend contact property admin |
+| contactProperties.get | OPT-OUT | not needed — no Resend contact property admin |
+| contactProperties.update | OPT-OUT | not needed — no Resend contact property admin |
+| contactProperties.remove | OPT-OUT | not needed — no Resend contact property admin |
+| events.send | OPT-OUT | not needed — no custom Resend events this phase |
+| events.create | OPT-OUT | not needed — no custom Resend events this phase |
+| events.get | OPT-OUT | not needed — no custom Resend events this phase |
+| events.list | OPT-OUT | not needed — no custom Resend events this phase |
+| events.update | OPT-OUT | not needed — no custom Resend events this phase |
+| events.remove | OPT-OUT | not needed — no custom Resend events this phase |
+| logs.list | OPT-OUT | not needed — no Resend log viewer |
+| logs.get | OPT-OUT | not needed — no Resend log viewer |
+| oauthGrants.list | OPT-OUT | explicitly out of scope — no OAuth grant admin |
+| oauthGrants.revoke | OPT-OUT | explicitly out of scope — no OAuth grant admin |
+| suppressions.add | OPT-OUT | not needed — no suppression-list admin this phase |
+| suppressions.list | OPT-OUT | not needed — no suppression-list admin this phase |
+| suppressions.get | OPT-OUT | not needed — no suppression-list admin this phase |
+| suppressions.remove | OPT-OUT | not needed — no suppression-list admin this phase |
 
 ```coverage
 [
@@ -107,6 +133,32 @@
   {"capability":"webhooks.list","decision":"OPT-OUT","reason":"not needed — no webhook admin"},
   {"capability":"webhooks.get","decision":"OPT-OUT","reason":"not needed — no webhook admin"},
   {"capability":"webhooks.update","decision":"OPT-OUT","reason":"not needed — no webhook admin"},
-  {"capability":"webhooks.remove","decision":"OPT-OUT","reason":"not needed — no webhook admin"}
+  {"capability":"webhooks.remove","decision":"OPT-OUT","reason":"not needed — no webhook admin"},
+  {"capability":"automations.create","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"automations.list","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"automations.get","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"automations.update","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"automations.remove","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"automations.duplicate","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"automations.stop","decision":"OPT-OUT","reason":"not needed — no workflow automations this phase"},
+  {"capability":"contactProperties.create","decision":"OPT-OUT","reason":"not needed — no Resend contact property admin"},
+  {"capability":"contactProperties.list","decision":"OPT-OUT","reason":"not needed — no Resend contact property admin"},
+  {"capability":"contactProperties.get","decision":"OPT-OUT","reason":"not needed — no Resend contact property admin"},
+  {"capability":"contactProperties.update","decision":"OPT-OUT","reason":"not needed — no Resend contact property admin"},
+  {"capability":"contactProperties.remove","decision":"OPT-OUT","reason":"not needed — no Resend contact property admin"},
+  {"capability":"events.send","decision":"OPT-OUT","reason":"not needed — no custom Resend events this phase"},
+  {"capability":"events.create","decision":"OPT-OUT","reason":"not needed — no custom Resend events this phase"},
+  {"capability":"events.get","decision":"OPT-OUT","reason":"not needed — no custom Resend events this phase"},
+  {"capability":"events.list","decision":"OPT-OUT","reason":"not needed — no custom Resend events this phase"},
+  {"capability":"events.update","decision":"OPT-OUT","reason":"not needed — no custom Resend events this phase"},
+  {"capability":"events.remove","decision":"OPT-OUT","reason":"not needed — no custom Resend events this phase"},
+  {"capability":"logs.list","decision":"OPT-OUT","reason":"not needed — no Resend log viewer"},
+  {"capability":"logs.get","decision":"OPT-OUT","reason":"not needed — no Resend log viewer"},
+  {"capability":"oauthGrants.list","decision":"OPT-OUT","reason":"explicitly out of scope — no OAuth grant admin"},
+  {"capability":"oauthGrants.revoke","decision":"OPT-OUT","reason":"explicitly out of scope — no OAuth grant admin"},
+  {"capability":"suppressions.add","decision":"OPT-OUT","reason":"not needed — no suppression-list admin this phase"},
+  {"capability":"suppressions.list","decision":"OPT-OUT","reason":"not needed — no suppression-list admin this phase"},
+  {"capability":"suppressions.get","decision":"OPT-OUT","reason":"not needed — no suppression-list admin this phase"},
+  {"capability":"suppressions.remove","decision":"OPT-OUT","reason":"not needed — no suppression-list admin this phase"}
 ]
 ```
