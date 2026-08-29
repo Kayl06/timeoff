@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-08-29T13:30:39.143Z"
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-08-29T13:34:16.521Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 2 execution started
-state_head: b818b05a7b896dddc593e81c11c05ef5d7bec01c
+state_head: f3e11e067a0213a0d384cd1356341a2200b105c9
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 12
+  completed_plans: 13
   percent: 14
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 2 (Tenant Isolation and Server Authz) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 2 execution started
 
@@ -70,6 +70,7 @@ Progress: [█░░░░░░░░░] 14%
 | Phase 02-tenant-isolation-and-server-authz P01 | 4 min | 3 tasks | 7 files |
 | Phase 02-tenant-isolation-and-server-authz P02 | 4 min | 3 tasks | 8 files |
 | Phase 02-tenant-isolation-and-server-authz P03 | 2 min | 2 tasks | 4 files |
+| Phase 02-tenant-isolation-and-server-authz P04 | 2 min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -114,6 +115,9 @@ Recent decisions affecting current work:
 - [Phase 02-tenant-isolation-and-server-authz]: PATCH approve/reject bind approver_id via bindLeaveApprover from session.user.id; cancel/delete have no actor field on IDatabaseService
 - [Phase 02-tenant-isolation-and-server-authz]: Bulk POST builds status and approved_at/rejected_at on the server, then bindLeaveApprover before bulkUpdateLeaveRequests
 - [Phase 02-tenant-isolation-and-server-authz]: Operations hook keeps userId only for query-key invalidation; JSON body has action/comments/reason/ids only
+- [Phase 2]: Leave list scope is resolved from session.user.role; client scope=all is ignored for employees and supervisors
+- [Phase 2]: PATCH notifications takes id from query or body but only marks read if the row is in getNotificationsByUser(session.user.id)
+- [Phase 2]: GET /api/manager-team-stats uses session.user.id as managerId and returns 403 for employee
 
 ### Pending Todos
 
@@ -134,6 +138,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T13:30:38.998Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-08-29T13:34:16.376Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None
