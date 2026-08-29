@@ -2,9 +2,29 @@ import { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { supabase, mapUserFromDatabase, mapUserToDatabase, User } from './supabase'
+import { supabase, mapUserFromDatabase } from './supabase'
 import { UserRole } from '@timeoff/types'
 import { env, devLog } from './env'
+import { decideGoogleSignIn, INVITE_REQUIRED_PATH } from './google-signin-gate'
+import { buildCreateCompanyWithOwnerArgs } from './create-company-rpc'
+import {
+  readPendingKind,
+  readPendingValue,
+  clearPendingAuthCookies,
+} from './pending-auth-cookie'
+import { isCompanyOwner } from './company-owner'
+
+async function resolveIsOwner(userId: string, companyId: string | undefined): Promise<boolean> {
+  if (!userId || !companyId) {
+    return false
+  }
+  const { data: company } = await supabase
+    .from('companies')
+    .select('owner_id')
+    .eq('id', companyId)
+    .single()
+  return isCompanyOwner(userId, company?.owner_id || '')
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -58,6 +78,8 @@ export const authOptions: NextAuthOptions = {
             team: mappedUser.team,
             role: mappedUser.role as UserRole,
             managerId: mappedUser.managerId,
+            companyId: mappedUser.companyId,
+            isOwner: await resolveIsOwner(mappedUser.id, mappedUser.companyId),
             hireDate: mappedUser.hireDate,
             isActive: mappedUser.isActive,
           }
@@ -69,47 +91,72 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'google') {
-        try {
-          // Check if user exists in our database
-          const { data: existingUser } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', user.email || '')
-            .single()
-
-          if (!existingUser) {
-            // Create new user in our database
-            const userData = mapUserToDatabase({
-              email: user.email || 'unknown@example.com',
-              firstName: user.name?.split(' ')[0] || '',
-              lastName: user.name?.split(' ').slice(1).join(' ') || '',
-              avatar: user.image || undefined,
-              department: 'Unassigned',
-              team: 'Unassigned',
-              role: 'employee',
-              hireDate: new Date(),
-              isActive: true,
-            })
-
-            const { data: newUser, error } = await supabase
-              .from('users')
-              .insert(userData)
-              .select()
-              .single()
-
-            if (error) {
-              devLog.error('Error creating user:', error)
-              return false
-            }
-          }
-        } catch (error) {
-          devLog.error('Error during sign in:', error)
-          return false
-        }
+    async signIn({ user, account }) {
+      if (account?.provider !== 'google') {
+        return true
       }
-      return true
+
+      try {
+        const email = user.email || ''
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('*')
+          .eq('email', email)
+          .single()
+
+        const pendingKind = readPendingKind()
+        const pendingValue = readPendingValue()
+        const pendingCompany = pendingKind === 'company'
+        const pendingInvite = pendingKind === 'invite'
+
+        const decision = decideGoogleSignIn({
+          existingUser: Boolean(existingUser),
+          pendingCompany,
+          pendingInvite,
+        })
+
+        if (decision !== true) {
+          return INVITE_REQUIRED_PATH
+        }
+
+        if (existingUser) {
+          clearPendingAuthCookies()
+          return true
+        }
+
+        // Deny-until-01-05: do not insert a global employee for invite kind
+        if (pendingInvite && !existingUser) {
+          return INVITE_REQUIRED_PATH
+        }
+
+        if (pendingCompany && pendingValue) {
+          const firstName = user.name?.split(' ')[0] || ''
+          const lastName = user.name?.split(' ').slice(1).join(' ') || ''
+          const { error } = await supabase.rpc(
+            'create_company_with_owner',
+            buildCreateCompanyWithOwnerArgs({
+              email,
+              passwordHash: null,
+              firstName,
+              lastName,
+              companyName: pendingValue,
+            })
+          )
+
+          if (error) {
+            devLog.error('Error creating company via Google:', error)
+            return INVITE_REQUIRED_PATH
+          }
+
+          clearPendingAuthCookies()
+          return true
+        }
+
+        return INVITE_REQUIRED_PATH
+      } catch (error) {
+        devLog.error('Error during Google sign in:', error)
+        return INVITE_REQUIRED_PATH
+      }
     },
     async session({ session, token }) {
       if (session.user?.email) {
@@ -132,6 +179,8 @@ export const authOptions: NextAuthOptions = {
               team: mappedUser.team,
               role: mappedUser.role,
               managerId: mappedUser.managerId,
+              companyId: mappedUser.companyId,
+              isOwner: await resolveIsOwner(mappedUser.id, mappedUser.companyId),
               hireDate: mappedUser.hireDate,
               isActive: mappedUser.isActive,
             } as any
@@ -151,6 +200,8 @@ export const authOptions: NextAuthOptions = {
         token.team = (user as any).team
         token.role = (user as any).role
         token.managerId = (user as any).managerId
+        token.companyId = (user as any).companyId
+        token.isOwner = (user as any).isOwner ?? await resolveIsOwner(user.id, (user as any).companyId)
         token.hireDate = (user as any).hireDate
         token.isActive = (user as any).isActive
       }

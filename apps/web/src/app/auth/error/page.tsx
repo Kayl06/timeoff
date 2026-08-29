@@ -86,6 +86,12 @@ function AuthErrorContent() {
           description: 'You need to be signed in to access this page.',
           action: 'Sign in'
         }
+      case 'InviteRequired':
+        return {
+          title: 'Invite required',
+          description: 'Google sign-in cannot create a company or drop you into a shared employee pool. Ask your admin for an invite, or create a company with email.',
+          action: 'Create a company'
+        }
       default:
         return {
           title: 'Authentication Error',
@@ -107,6 +113,9 @@ function AuthErrorContent() {
         break
       case 'Verification':
         router.push('/auth/forgot-password')
+        break
+      case 'InviteRequired':
+        router.push('/auth/signup')
         break
       default:
         router.push('/auth/signin')

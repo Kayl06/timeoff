@@ -14,6 +14,8 @@ declare module 'next-auth' {
       team: string
       role: UserRole
       managerId?: string
+      companyId: string
+      isOwner: boolean
       hireDate: Date
       isActive: boolean
     }
@@ -27,6 +29,8 @@ declare module 'next-auth' {
     team: string
     role: UserRole
     managerId?: string
+    companyId: string
+    isOwner: boolean
     hireDate: Date
     isActive: boolean
   }
@@ -41,6 +45,8 @@ declare module 'next-auth/jwt' {
     team: string
     role: UserRole
     managerId?: string
+    companyId: string
+    isOwner: boolean
     hireDate: Date
     isActive: boolean
   }

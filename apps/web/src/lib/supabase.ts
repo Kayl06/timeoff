@@ -43,6 +43,7 @@ export interface User {
   team: string
   role: string
   managerId?: string
+  companyId: string
   hireDate: Date
   isActive: boolean
   acceptMarketing?: boolean
@@ -73,6 +74,7 @@ export const mapUserFromDatabase = (dbUser: any): User => {
     team: dbUser.team,
     role: dbUser.role,
     managerId: dbUser.manager_id || dbUser.managerId,
+    companyId: dbUser.company_id || dbUser.companyId || '',
     hireDate: new Date(dbUser.hire_date || dbUser.hireDate),
     isActive: dbUser.is_active || dbUser.isActive,
     acceptMarketing: dbUser.accept_marketing,
@@ -97,6 +99,7 @@ export const mapUserToDatabase = (user: Partial<User>): any => {
     team: user.team,
     role: user.role,
     manager_id: user.managerId,
+    company_id: user.companyId,
     hire_date: user.hireDate,
     is_active: user.isActive,
     accept_marketing: user.acceptMarketing,
