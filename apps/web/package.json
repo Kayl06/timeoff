@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types src/lib/invite-token.test.ts src/lib/google-signin-gate.test.ts src/lib/company-owner.test.ts src/lib/create-company-rpc.test.ts src/lib/pending-context-schema.test.ts src/lib/invite-auth.test.ts src/lib/invite-accept.test.ts src/lib/password-client.test.ts src/lib/accept-invite-rpc.test.ts src/lib/require-tenant-session.test.ts src/lib/bind-leave-actor.test.ts src/lib/supabase-jwt.test.ts src/lib/leave-list-scope.test.ts src/lib/leave-balance-display.test.ts",
+    "test": "node --test --experimental-strip-types src/lib/invite-token.test.ts src/lib/google-signin-gate.test.ts src/lib/company-owner.test.ts src/lib/create-company-rpc.test.ts src/lib/pending-context-schema.test.ts src/lib/invite-auth.test.ts src/lib/invite-accept.test.ts src/lib/password-client.test.ts src/lib/accept-invite-rpc.test.ts src/lib/require-tenant-session.test.ts src/lib/bind-leave-actor.test.ts src/lib/supabase-jwt.test.ts src/lib/leave-list-scope.test.ts src/lib/leave-balance-display.test.ts src/lib/leave-balance-card-states.test.ts",
     "clean": "rm -rf .next"
   },
   "dependencies": {
