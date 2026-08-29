@@ -12,6 +12,10 @@ import {
   formatValidationErrors,
 } from '@/lib/validation'
 import { calculateTotalDays } from '@/lib/date-utils'
+import {
+  fetchLeaveRequestsForScope,
+  resolveLeaveListScope,
+} from '@/lib/leave-list-scope'
 
 const UNAUTHORIZED = { error: 'Unauthorized' } as const
 const AUTO_APPROVE_COMMENT = 'Auto-approved (Manager self-leave)'
@@ -29,7 +33,7 @@ async function requireTenantSession() {
   return { ok: true as const, session }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const gate = await requireTenantSession()
     if (!gate.ok) {
@@ -37,11 +41,19 @@ export async function GET() {
     }
 
     const { session } = gate
+    const scope = resolveLeaveListScope(
+      session.user.role,
+      request.nextUrl.searchParams.get('scope')
+    )
     const databaseService = await createTenantDatabaseService({
       userId: session.user.id,
       companyId: session.user.companyId,
     })
-    const requests = await databaseService.getLeaveRequestsByUser(session.user.id)
+    const requests = await fetchLeaveRequestsForScope(databaseService, {
+      userId: session.user.id,
+      department: session.user.department,
+      scope,
+    })
     return NextResponse.json(requests)
   } catch (error) {
     devLog.error('List leave requests error:', error)
