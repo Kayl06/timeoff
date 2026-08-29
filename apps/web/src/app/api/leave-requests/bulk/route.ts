@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { devLog } from '@/lib/env'
 import { tenantSessionRejectStatus } from '@/lib/require-tenant-session'
 import { createTenantDatabaseService } from '@/lib/tenant-supabase'
-import { bindLeaveApprover } from '@/lib/bind-leave-actor'
+import { bindLeaveApprover, canApproveOrRejectLeave } from '@/lib/bind-leave-actor'
 import {
   leaveRequestBulkBodySchema,
   validateInput,
@@ -12,6 +12,7 @@ import {
 } from '@/lib/validation'
 
 const UNAUTHORIZED = { error: 'Unauthorized' } as const
+const FORBIDDEN = { error: 'Forbidden' } as const
 
 async function requireTenantSession() {
   const session = await getServerSession(authOptions)
@@ -47,6 +48,9 @@ export async function POST(request: NextRequest) {
     }
 
     const parsed = validationResult.data
+    if (!canApproveOrRejectLeave(session.user.role)) {
+      return NextResponse.json(FORBIDDEN, { status: 403 })
+    }
     const now = new Date()
     const updates =
       parsed.action === 'approve'

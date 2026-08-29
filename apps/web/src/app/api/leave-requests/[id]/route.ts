@@ -4,7 +4,7 @@ import { authOptions } from '@/lib/auth'
 import { devLog } from '@/lib/env'
 import { tenantSessionRejectStatus } from '@/lib/require-tenant-session'
 import { createTenantDatabaseService } from '@/lib/tenant-supabase'
-import { bindLeaveApprover } from '@/lib/bind-leave-actor'
+import { bindLeaveApprover, canApproveOrRejectLeave, canCancelOrDeleteLeave } from '@/lib/bind-leave-actor'
 import {
   leaveRequestPatchBodySchema,
   uuidSchema,
@@ -13,6 +13,7 @@ import {
 } from '@/lib/validation'
 
 const UNAUTHORIZED = { error: 'Unauthorized' } as const
+const FORBIDDEN = { error: 'Forbidden' } as const
 
 async function requireTenantSession() {
   const session = await getServerSession(authOptions)
@@ -69,6 +70,9 @@ export async function PATCH(
 
     switch (parsed.action) {
       case 'approve': {
+        if (!canApproveOrRejectLeave(session.user.role)) {
+          return NextResponse.json(FORBIDDEN, { status: 403 })
+        }
         const bound = bindLeaveApprover(
           { comments: parsed.comments },
           session.user.id
@@ -81,6 +85,9 @@ export async function PATCH(
         return NextResponse.json(updated)
       }
       case 'reject': {
+        if (!canApproveOrRejectLeave(session.user.role)) {
+          return NextResponse.json(FORBIDDEN, { status: 403 })
+        }
         const bound = bindLeaveApprover(
           { reason: parsed.reason },
           session.user.id
@@ -93,10 +100,32 @@ export async function PATCH(
         return NextResponse.json(updated)
       }
       case 'cancel': {
+        const existing = await databaseService.getLeaveRequestById(idResult.data)
+        if (
+          !existing ||
+          !canCancelOrDeleteLeave(
+            session.user.role,
+            session.user.id,
+            existing.user_id
+          )
+        ) {
+          return NextResponse.json(FORBIDDEN, { status: 403 })
+        }
         const updated = await databaseService.cancelLeaveRequest(idResult.data)
         return NextResponse.json(updated)
       }
       case 'delete': {
+        const existing = await databaseService.getLeaveRequestById(idResult.data)
+        if (
+          !existing ||
+          !canCancelOrDeleteLeave(
+            session.user.role,
+            session.user.id,
+            existing.user_id
+          )
+        ) {
+          return NextResponse.json(FORBIDDEN, { status: 403 })
+        }
         const updated = await databaseService.deleteLeaveRequest(idResult.data)
         return NextResponse.json(updated)
       }

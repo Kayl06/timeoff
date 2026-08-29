@@ -1,6 +1,12 @@
 import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
-import { bindLeaveApprover, bindLeaveCreateActor } from './bind-leave-actor.ts'
+import { UserRole } from '@timeoff/types'
+import {
+  bindLeaveApprover,
+  bindLeaveCreateActor,
+  canApproveOrRejectLeave,
+  canCancelOrDeleteLeave,
+} from './bind-leave-actor.ts'
 
 const sessionUserId = '11111111-1111-4111-8111-111111111111'
 const spoofedUserId = '22222222-2222-4222-8222-222222222222'
@@ -50,5 +56,49 @@ describe('bindLeaveApprover', () => {
 
     assert.equal(bound.approver_id, sessionUserId)
     assert.notEqual(bound.approver_id, spoofedApproverId)
+  })
+})
+
+describe('canApproveOrRejectLeave', () => {
+  it('is true for supervisor, admin, and hr', () => {
+    assert.equal(canApproveOrRejectLeave(UserRole.SUPERVISOR), true)
+    assert.equal(canApproveOrRejectLeave(UserRole.ADMIN), true)
+    assert.equal(canApproveOrRejectLeave(UserRole.HR), true)
+  })
+
+  it('is false for employee and unknown roles', () => {
+    assert.equal(canApproveOrRejectLeave(UserRole.EMPLOYEE), false)
+    assert.equal(canApproveOrRejectLeave('owner'), false)
+  })
+})
+
+describe('canCancelOrDeleteLeave', () => {
+  it('is true when the session user owns the request', () => {
+    assert.equal(
+      canCancelOrDeleteLeave(UserRole.EMPLOYEE, sessionUserId, sessionUserId),
+      true
+    )
+  })
+
+  it('is false when an employee or supervisor targets another user', () => {
+    assert.equal(
+      canCancelOrDeleteLeave(UserRole.EMPLOYEE, sessionUserId, spoofedUserId),
+      false
+    )
+    assert.equal(
+      canCancelOrDeleteLeave(UserRole.SUPERVISOR, sessionUserId, spoofedUserId),
+      false
+    )
+  })
+
+  it('is true when admin or hr targets another user', () => {
+    assert.equal(
+      canCancelOrDeleteLeave(UserRole.ADMIN, sessionUserId, spoofedUserId),
+      true
+    )
+    assert.equal(
+      canCancelOrDeleteLeave(UserRole.HR, sessionUserId, spoofedUserId),
+      true
+    )
   })
 })
