@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase'
 import { devLog } from '@/lib/env'
 import { hashInviteTokenHex } from '@/lib/invite-token'
 import { inviteIsUsable } from '@/lib/invite-accept'
+import { EMAIL_EXISTS_ERROR } from '@/lib/invite-auth'
 
 const INVALID_OR_EXPIRED = { error: 'invalid_or_expired' as const }
 
@@ -50,9 +51,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(INVALID_OR_EXPIRED, { status: 404 })
     }
 
+    const inviteEmail = (invite as InvitePreviewRow).email
+    const { data: existingUser, error: userLookupError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', inviteEmail)
+      .maybeSingle()
+
+    if (userLookupError) {
+      throw userLookupError
+    }
+
+    if (existingUser) {
+      return NextResponse.json({ error: EMAIL_EXISTS_ERROR }, { status: 409 })
+    }
+
     return NextResponse.json({
       companyName,
-      email: (invite as InvitePreviewRow).email,
+      email: inviteEmail,
     })
   } catch (error) {
     devLog.error('Invite preview error:', error)

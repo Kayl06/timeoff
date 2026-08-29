@@ -33,3 +33,28 @@ export function inviteIsUsable(invite: InviteUsabilityRef): boolean {
   }
   return new Date(invite.expires_at).getTime() > Date.now()
 }
+
+export type InvitePreviewPageState = 'invalid' | 'exists' | 'ready'
+
+export interface InvitePreviewPageStateInput {
+  usable: boolean
+  existingUser: boolean
+}
+
+/**
+ * Page state after preview usability and existing-email checks.
+ * Unusable invites stay invalid even if a users row exists for that email.
+ * @param input - usable from inviteIsUsable; existingUser true when users.email has a row
+ * @returns invalid, exists, or ready
+ */
+export function invitePreviewPageState(
+  input: InvitePreviewPageStateInput
+): InvitePreviewPageState {
+  if (!input.usable) {
+    return 'invalid'
+  }
+  if (input.existingUser) {
+    return 'exists'
+  }
+  return 'ready'
+}
