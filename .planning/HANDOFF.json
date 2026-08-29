@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-08-29T17:53:00.379Z",
+  "phase": "4",
+  "phase_name": "Approve Reject Cancel Side Effects",
+  "phase_dir": ".planning/phases/04-approve-reject-cancel-side-effects",
+  "plan": 2,
+  "task": 2,
+  "total_tasks": 2,
+  "status": "paused",
+  "completed_tasks": [
+    {
+      "id": "04-01-1",
+      "name": "Wave 0: deduct restore year and status gates",
+      "status": "done",
+      "commit": "10168fb"
+    },
+    {
+      "id": "04-01-2",
+      "name": "Wave 0: CHECK-valid leave-request notification type",
+      "status": "done",
+      "commit": "c9f0737"
+    },
+    {
+      "id": "04-01-summary",
+      "name": "04-01 SUMMARY",
+      "status": "done",
+      "commit": "9476359"
+    },
+    {
+      "id": "04-02-1",
+      "name": "Pin official resend after legitimacy check",
+      "status": "done",
+      "commit": "3f3ecd6"
+    },
+    {
+      "id": "04-02-2",
+      "name": "Wave 0: server-only sendMail adapter",
+      "status": "in_progress",
+      "progress": "RED test committed (4b213a6). mail.ts exists uncommitted; env.ts and env.example have optional RESEND_API_KEY and EMAIL_FROM. No 04-02-SUMMARY.md yet. Executor 5199d11f may still be writing."
+    }
+  ],
+  "remaining_tasks": [
+    {
+      "id": "04-02-2",
+      "name": "Finish sendMail adapter, register mail.test.ts, write 04-02-SUMMARY.md",
+      "status": "in_progress"
+    },
+    {
+      "id": "04-03-1",
+      "name": "End-to-end approve — deduct audit notify mail",
+      "status": "not_started"
+    },
+    {
+      "id": "04-03-2",
+      "name": "Auto-approve mail and approve cache invalidation",
+      "status": "not_started"
+    },
+    {
+      "id": "04-04-1",
+      "name": "Reject skips balances and still notifies",
+      "status": "not_started"
+    },
+    {
+      "id": "04-04-2",
+      "name": "Cancel and delete restore with session actor",
+      "status": "not_started"
+    },
+    {
+      "id": "04-04-3",
+      "name": "Invalidate remaining-day keys; keep bulk status-only",
+      "status": "not_started"
+    }
+  ],
+  "blockers": [
+    {
+      "description": "Phase 3 verification is human_needed. Five UAT items in 03-UAT.md are still pending. Do not mark Phase 3 complete without /gsd-verify-work 03.",
+      "type": "human_action",
+      "workaround": "Continue Phase 4 implementation (code is independent). Close Phase 3 after UAT."
+    },
+    {
+      "description": "04-02 executor was backgrounded mid-task. Production commits exist without SUMMARY.md.",
+      "type": "technical",
+      "workaround": "Before re-dispatching 04-02, check for 04-02-SUMMARY.md and leftover uncommitted mail/env files. Finish or write SUMMARY; do not start 04-02 from scratch."
+    }
+  ],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {
+      "action": "Run Phase 3 UAT in 03-UAT.md then /gsd-verify-work 03",
+      "context": "Verifier scored 21/22; GET self-heal and live remaining-days need a browser. Tests saved, none marked pass.",
+      "blocking": false
+    },
+    {
+      "action": "Hosted Resend UAT of NOTIF-03/04 needs RESEND_API_KEY and EMAIL_FROM",
+      "context": "Local without key is { sent: false } by design (D-15). Do not commit .env.local.",
+      "blocking": false
+    },
+    {
+      "action": "Hosted Supabase still needs a human db push if .env.local does not point at local",
+      "context": "Phase 3 RPC seed was pushed locally only.",
+      "blocking": false
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "User authorized implement-and-decide all remaining phases (--auto discuss/plan/execute).",
+      "rationale": "Skip remaining discussion prompts; apply recommended options.",
+      "phase": "4"
+    },
+    {
+      "decision": "D-01–D-20 locked in 04-CONTEXT.md",
+      "rationale": "Deduct remaining_days in place; year from start_date; 409 missing row; restore only approved cancel/delete; real actor UUID; CHECK notification types; Resend best-effort after durable writes; tenant BFF; bulk Phase 5; no restyle.",
+      "phase": "4"
+    },
+    {
+      "decision": "workflow.use_worktrees=false and sequential on main",
+      "rationale": "Cursor Task has no worktree isolation. Do not persist this as an accidental product commit unless intended.",
+      "phase": "4"
+    },
+    {
+      "decision": "Resend 6.25.0 pinned; legitimacy SUS too-new; no human-verify stop",
+      "rationale": "Official Node SDK; COVERAGE.md INTEGRATE emails.send only.",
+      "phase": "4"
+    },
+    {
+      "decision": "Phase 3 implementation complete; GSD status human_needed",
+      "rationale": "21/22 must-haves; 03-UAT.md persisted; do not /gsd-complete-milestone.",
+      "phase": "3"
+    }
+  ],
+  "uncommitted_files": [
+    ".planning/config.json",
+    "apps/web/env.example",
+    "apps/web/src/lib/env.ts",
+    "apps/web/src/lib/mail.ts",
+    ".gsd/",
+    ".planning/milestone.lock"
+  ],
+  "next_action": "Inspect whether 04-02-SUMMARY.md exists and whether mail.ts/mail.test.ts/env files are committed. If the background executor finished, continue 04-03. If not, finish 04-02 task 2 (sendMail + tests + SUMMARY) without re-running task 1, then execute 04-03 and 04-04 sequentially on main.",
+  "context_notes": "Autonomous pipeline: Phase 3 executed and verified (human_needed). Phase 4 discussed (--auto), UI-SPEC written, researched, patterned, planned (4 plans / 3 waves, checker PASSED), execute started. 04-01 complete. 04-02 task 1 committed; task 2 TDD red committed and implementation files are dirty/untracked. STATE.md is stale (still Phase 3 verifying). Do not push. Do not commit .env.local. Phases 5–7 not planned. User asked /gsd-pause-work while 04-02 was backgrounded."
+}
