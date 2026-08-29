@@ -37,7 +37,7 @@ export function LeaveBalanceCard({ leaveBalance, isLoading }: LeaveBalanceCardPr
 
   const cardBalances = balancesForLeaveCard(leaveBalance ?? [])
 
-  if (!leaveBalance || leaveBalance.length === 0) {
+  if (cardBalances.length === 0) {
     return (
       <Card>
         <CardHeader>
