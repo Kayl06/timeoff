@@ -32,7 +32,13 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. That owner can invite people by email into only their company
   3. An invitee joins that company and cannot see any other company
   4. Google sign-in does not place a user in the wrong company or a global employee pool
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 01-01-PLAN.md — Wave 0 token/gate/owner unit tests
+- [ ] 01-02-PLAN.md — Credentials create-company tracer + schema push
+- [ ] 01-03-PLAN.md — Google InviteRequired + pending company cookie
+- [ ] 01-04-PLAN.md — Owner copy-link invites
+- [ ] 01-05-PLAN.md — Accept invite (credentials + Google)
 **UI hint**: yes
 
 ### Phase 2: Tenant Isolation and Server Authz
@@ -114,7 +120,7 @@ Phase 6 depends only on Phase 2 (authz + tenant exist; remaining-days and leave 
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Company Signup and Invites | 0/TBD | Not started | - |
+| 1. Company Signup and Invites | 0/5 | Not started | - |
 | 2. Tenant Isolation and Server Authz | 0/TBD | Not started | - |
 | 3. Live Remaining Days | 0/TBD | Not started | - |
 | 4. Approve Reject Cancel Side Effects | 0/TBD | Not started | - |
