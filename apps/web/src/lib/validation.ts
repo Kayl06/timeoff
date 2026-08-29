@@ -75,6 +75,21 @@ export const userSignInSchema = z.object({
   password: z.string().min(1, 'Password is required')
 })
 
+/** Pending Google OAuth context: company name or invite token (httpOnly cookie payload). */
+export const pendingContextSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('company'),
+    companyName: z.string()
+      .min(1, 'Company name is required')
+      .max(80, 'Company name is too long')
+      .transform(name => name.trim()),
+  }),
+  z.object({
+    kind: z.literal('invite'),
+    token: z.string().min(1, 'Invite token is required'),
+  }),
+])
+
 // Leave request validation
 export const leaveRequestSchema = z.object({
   leave_type: z.enum(['vacation', 'sick', 'personal', 'maternity', 'paternity', 'bereavement', 'unpaid', 'other']),
@@ -163,6 +178,7 @@ export const dateRangeSchema = z.object({
 // Export types from schemas
 export type UserRegistrationInput = z.infer<typeof userRegistrationSchema>
 export type UserSignInInput = z.infer<typeof userSignInSchema>
+export type PendingContextInput = z.infer<typeof pendingContextSchema>
 export type LeaveRequestInput = z.infer<typeof leaveRequestSchema>
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>
 export type PasswordResetConfirmInput = z.infer<typeof passwordResetConfirmSchema>
