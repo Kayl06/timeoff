@@ -10,8 +10,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import { Eye, EyeOff, Mail, Lock, User, Building2, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
+import { PASSWORD_REQUIREMENTS } from '@/lib/validation'
+import {
+  firstPasswordError,
+  mergeSignupFieldErrors,
+  passwordMeetsApiRules,
+  passwordRequirementItems,
+} from '@/lib/password-client'
 
 interface FormData {
   companyName: string
@@ -59,7 +66,7 @@ export default function SignUpPage() {
   // Password strength calculation
   const calculatePasswordStrength = (password: string) => {
     let strength = 0
-    if (password.length >= 8) strength += 1
+    if (password.length >= PASSWORD_REQUIREMENTS.minLength) strength += 1
     if (/[a-z]/.test(password)) strength += 1
     if (/[A-Z]/.test(password)) strength += 1
     if (/[0-9]/.test(password)) strength += 1
@@ -90,10 +97,9 @@ export default function SignUpPage() {
       newErrors.email = 'Please enter a valid email address'
     }
 
-    if (!formData.password) {
-      newErrors.password = 'Password is required'
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters'
+    const passwordError = firstPasswordError(formData.password)
+    if (passwordError) {
+      newErrors.password = passwordError
     }
 
     if (!formData.confirmPassword) {
@@ -116,7 +122,7 @@ export default function SignUpPage() {
     formData.firstName.trim().length > 0 &&
     formData.lastName.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(formData.email) &&
-    formData.password.length >= 8 &&
+    passwordMeetsApiRules(formData.password) &&
     formData.confirmPassword.length > 0 &&
     formData.password === formData.confirmPassword &&
     formData.acceptTerms
@@ -168,7 +174,11 @@ export default function SignUpPage() {
       }
 
       if (!response.ok) {
-        toast.error(data.error || 'Failed to create account')
+        const fieldErrors = mergeSignupFieldErrors(data.details)
+        setErrors(prev => ({ ...prev, ...fieldErrors }))
+        if (Object.keys(fieldErrors).length === 0) {
+          toast.error(data.error || 'Failed to create account')
+        }
         return
       }
 
@@ -229,16 +239,7 @@ export default function SignUpPage() {
     return 'Strong'
   }
 
-  const getPasswordRequirements = () => {
-    const password = formData.password
-    return [
-      { label: 'At least 8 characters', met: password.length >= 8 },
-      { label: 'Contains lowercase letter', met: /[a-z]/.test(password) },
-      { label: 'Contains uppercase letter', met: /[A-Z]/.test(password) },
-      { label: 'Contains number', met: /[0-9]/.test(password) },
-      { label: 'Contains special character', met: /[^A-Za-z0-9]/.test(password) },
-    ]
-  }
+  const getPasswordRequirements = () => passwordRequirementItems(formData.password)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
