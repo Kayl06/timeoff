@@ -212,6 +212,25 @@ export const apiErrorSchema = z.object({
 // Common ID validation
 export const uuidSchema = z.string().uuid('Invalid ID format')
 
+/** JSON body for PATCH /api/leave-requests/[id]. Actor ids are never taken from the client. */
+export const leaveRequestPatchBodySchema = z.object({
+  action: z.enum(['approve', 'reject', 'cancel', 'delete']),
+  comments: z.string().optional(),
+  reason: z.string().optional(),
+}).refine(
+  (data) => data.action !== 'reject' || Boolean(data.reason && data.reason.length > 0),
+  {
+    message: 'Reason is required',
+    path: ['reason'],
+  }
+)
+
+/** JSON body for POST /api/leave-requests/bulk. Actor ids are never taken from the client. */
+export const leaveRequestBulkBodySchema = z.object({
+  ids: z.array(uuidSchema).min(1),
+  action: z.enum(['approve', 'reject']),
+})
+
 // Date range validation
 export const dateRangeSchema = z.object({
   start_date: z.date(),
@@ -232,6 +251,8 @@ export type InviteAcceptInput = z.infer<typeof inviteAcceptSchema>
 export type PendingContextInput = z.infer<typeof pendingContextSchema>
 export type LeaveRequestInput = z.infer<typeof leaveRequestSchema>
 export type LeaveRequestCreateBodyInput = z.infer<typeof leaveRequestCreateBodySchema>
+export type LeaveRequestPatchBodyInput = z.infer<typeof leaveRequestPatchBodySchema>
+export type LeaveRequestBulkBodyInput = z.infer<typeof leaveRequestBulkBodySchema>
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>
 export type PasswordResetConfirmInput = z.infer<typeof passwordResetConfirmSchema>
 export type UserProfileUpdateInput = z.infer<typeof userProfileUpdateSchema>
