@@ -13,6 +13,18 @@ import {
   clearPendingAuthCookies,
 } from './pending-auth-cookie'
 import { isCompanyOwner } from './company-owner'
+import { hashInviteTokenHex } from './invite-token'
+import { companyIdFromInvite, inviteIsUsable } from './invite-accept'
+
+const ACCEPT_INVITE_MISMATCH_PATH = '/auth/accept-invite?error=mismatch'
+
+type InviteBindRow = {
+  id: string
+  email: string
+  status: string
+  expires_at: string
+  company_id: string
+}
 
 async function resolveIsOwner(userId: string, companyId: string | undefined): Promise<boolean> {
   if (!userId || !companyId) {
@@ -119,14 +131,101 @@ export const authOptions: NextAuthOptions = {
           return INVITE_REQUIRED_PATH
         }
 
-        if (existingUser) {
+        if (pendingInvite) {
+          if (!pendingValue) {
+            return INVITE_REQUIRED_PATH
+          }
+
+          const tokenHash = hashInviteTokenHex(pendingValue)
+          const { data: invite, error: inviteError } = await supabase
+            .from('company_invites')
+            .select('id, email, status, expires_at, company_id')
+            .eq('token_hash', tokenHash)
+            .maybeSingle()
+
+          if (inviteError) {
+            throw inviteError
+          }
+
+          const inviteRow = invite as InviteBindRow | null
+          if (!inviteRow || !inviteIsUsable(inviteRow)) {
+            return INVITE_REQUIRED_PATH
+          }
+
+          const googleEmail = email.toLowerCase()
+          const inviteEmail = inviteRow.email.toLowerCase()
+          if (googleEmail !== inviteEmail) {
+            return ACCEPT_INVITE_MISMATCH_PATH
+          }
+
+          const companyId = companyIdFromInvite(inviteRow)
+          const { data: memberByInviteEmail } = await supabase
+            .from('users')
+            .select('id, company_id')
+            .eq('email', inviteRow.email)
+            .maybeSingle()
+          const member = memberByInviteEmail || existingUser
+          const existingCompanyId = member?.company_id as string | undefined
+
+          if (member) {
+            if (existingCompanyId !== companyId) {
+              return INVITE_REQUIRED_PATH
+            }
+
+            await supabase
+              .from('company_invites')
+              .update({
+                status: 'accepted',
+                accepted_at: new Date().toISOString(),
+              })
+              .eq('id', inviteRow.id)
+
+            clearPendingAuthCookies()
+            return true
+          }
+
+          const firstName = user.name?.split(' ')[0] || ''
+          const lastName = user.name?.split(' ').slice(1).join(' ') || ''
+          const { error: insertError } = await supabase
+            .from('users')
+            .insert({
+              email: inviteRow.email,
+              password: null,
+              first_name: firstName,
+              last_name: lastName,
+              company_id: companyId,
+              role: 'employee',
+              department: 'Unassigned',
+              team: 'Unassigned',
+            })
+
+          if (insertError) {
+            if (insertError.code === '23505') {
+              return INVITE_REQUIRED_PATH
+            }
+            devLog.error('Error joining company via Google invite:', insertError)
+            return INVITE_REQUIRED_PATH
+          }
+
+          const { error: acceptError } = await supabase
+            .from('company_invites')
+            .update({
+              status: 'accepted',
+              accepted_at: new Date().toISOString(),
+            })
+            .eq('id', inviteRow.id)
+
+          if (acceptError) {
+            throw acceptError
+          }
+
           clearPendingAuthCookies()
           return true
         }
 
-        // Deny-until-01-05: do not insert a global employee for invite kind
-        if (pendingInvite && !existingUser) {
-          return INVITE_REQUIRED_PATH
+        if (existingUser) {
+          clearPendingAuthCookies()
+          return true
         }
 
         if (pendingCompany && pendingValue) {
