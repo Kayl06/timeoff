@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 03
 current_phase_name: Live Remaining Days
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-08-29T17:01:36.748Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-08-29T17:05:58.960Z"
 last_activity: 2026-08-30
 last_activity_desc: Phase 03 execution started
-state_head: 3a4483abcd7ad9363efbc42084f448c1886a982a
+state_head: 2db756b204139828fcbba91567f6c97bc7fd4ef6
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 20
-  completed_plans: 17
+  completed_plans: 18
   percent: 29
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 03 (Live Remaining Days) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 Status: Ready to execute
 Last activity: 2026-08-30 — Phase 03 execution started
 
@@ -75,6 +75,7 @@ Progress: [███░░░░░░░] 29%
 | Phase 02-tenant-isolation-and-server-authz P07 | 2 min | 3 tasks | 7 files |
 | Phase 02-tenant-isolation-and-server-authz P06 | 5 min | 3 tasks | 2 files |
 | Phase 03-live-remaining-days P01 | 3 min | 2 tasks | 6 files |
+| Phase 03-live-remaining-days P02 | 2 min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -134,6 +135,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Missing is_active on a policy fixture is treated as inactive
 - [Phase 03]: Multiple active policies for one type: sort by name, take index 0
 - [Phase 03]: planDefaultBalanceInserts is a pure function; no database client import
+- [Phase 03]: GET self-heal inserts only session.user.id for the current calendar year
+- [Phase 03]: Duplicate unique (user_id, leave_type, year) is continue then re-select, never UPDATE used_days
+- [Phase 03]: Leave Balance card maps leaveBalance through balancesForLeaveCard and renders remaining_days
 
 ### Pending Todos
 
@@ -154,6 +158,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T17:01:36.072Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-08-29T17:05:58.474Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
