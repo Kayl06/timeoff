@@ -4,9 +4,9 @@ current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: verifying
 stopped_at: Awaiting human verification (02-UAT.md)
-last_updated: "2026-08-29T14:12:00Z"
+last_updated: "2026-08-29T15:05:00Z"
 last_activity: 2026-08-29
-last_activity_desc: Phase 2 UAT complete 5/5 — security blocked on T-02-12
+last_activity_desc: Phase 2 security verified — threats_open 0 (T-02-12 closed)
 state_head: 90949130da9d9cf4aba7278b037ca3890c2f01d8
 progress:
   total_phases: 7
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 
 Phase: 2 (Tenant Isolation and Server Authz) — VERIFYING
 Plan: 7 of 7
-Status: UAT complete (5/5) — security blocked on T-02-12 password embed
-Last activity: 2026-08-29 — UAT complete; /gsd-secure-phase 2 required
+Status: UAT complete (5/5); security verified (threats_open: 0)
+Last activity: 2026-08-29 — T-02-12 closed; /gsd-secure-phase 2 passed
 
 Progress: [█░░░░░░░░░] 14%
 
@@ -149,6 +149,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T14:12:00Z
-Stopped at: UAT complete; security gate open (T-02-12)
+Last session: 2026-08-29T15:05:00Z
+Stopped at: Security verified (threats_open: 0); Phase 2 still VERIFYING
 Resume file: None
