@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: verifying
-stopped_at: Phase 2 Nyquist-compliant; still VERIFYING
-last_updated: "2026-08-29T15:10:00Z"
+stopped_at: v1 milestone audit gaps_found (8/27 reqs); Phase 2 still VERIFYING
+last_updated: "2026-08-29T15:15:00Z"
 last_activity: 2026-08-29
-last_activity_desc: Phase 2 Nyquist-compliant — VALIDATION.md validated
+last_activity_desc: v1 milestone audit — 8/27 satisfied; Phases 3–7 not started
 state_head: 90949130da9d9cf4aba7278b037ca3890c2f01d8
 progress:
   total_phases: 7
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 
 Phase: 2 (Tenant Isolation and Server Authz) — VERIFYING
 Plan: 7 of 7
-Status: UAT complete (5/5); security verified; Nyquist-compliant
-Last activity: 2026-08-29 — /gsd-validate-phase 2 passed
+Status: UAT complete (5/5); security verified; Nyquist-compliant; milestone audit gaps_found (8/27)
+Last activity: 2026-08-29 — /gsd-audit-milestone (do not complete v1 yet)
 
 Progress: [█░░░░░░░░░] 14%
 
@@ -149,6 +149,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T15:10:00Z
-Stopped at: Nyquist-compliant (threats_open: 0); Phase 2 still VERIFYING
+Last session: 2026-08-29T15:15:00Z
+Stopped at: Milestone audit gaps_found; next is finish Phase 2 then Phase 3
 Resume file: None
