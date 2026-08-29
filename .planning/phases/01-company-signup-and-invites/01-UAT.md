@@ -1,14 +1,14 @@
 ---
-status: partial
+status: complete
 phase: 01-company-signup-and-invites
 source: [01-VERIFICATION.md]
 started: 2026-08-29T09:40:00Z
-updated: 2026-08-29T12:03:00Z
+updated: 2026-08-29T12:12:00Z
 ---
 
 ## Current Test
 
-[testing paused — 1 items outstanding]
+[testing complete]
 
 ## Tests
 
@@ -20,9 +20,7 @@ previous: "No error message when password not meet the Verification"
 
 ### 2. Live Google OAuth
 expected: Unknown Gmail lands on Invite required with Create a company and Back to sign in; no users row in a global pool. Signup Google creates an owner via create_company_with_owner with p_password null.
-result: blocked
-blocked_by: third-party
-reason: "No setup Google supabase auth yet"
+result: pass
 
 ### 3. Owner copy-link invites
 expected: Owner-only nav item; 201 with acceptUrl; hashed token at rest; dialog stays open with Copy invite link. Non-owner 403.
@@ -41,11 +39,11 @@ result: pass
 ## Summary
 
 total: 5
-passed: 4
+passed: 5
 issues: 0
 pending: 0
 skipped: 0
-blocked: 1
+blocked: 0
 
 ## Gaps
 
