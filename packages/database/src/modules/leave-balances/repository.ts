@@ -36,6 +36,27 @@ export class LeaveBalanceRepository {
     }
   }
 
+  async create(balanceData: CreateLeaveBalanceData): Promise<LeaveBalance> {
+    try {
+      DatabaseUtils.validateRequiredFields(balanceData, [
+        'user_id', 'leave_type', 'total_allowance', 'year'
+      ]);
+
+      const sanitizedData = DatabaseUtils.sanitizeData(balanceData);
+
+      const { data, error } = await this.db
+        .from('leave_balances')
+        .insert(sanitizedData)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      throw DatabaseUtils.handleDatabaseError(error, 'createLeaveBalance');
+    }
+  }
+
   async upsert(balanceData: CreateLeaveBalanceData): Promise<LeaveBalance> {
     try {
       DatabaseUtils.validateRequiredFields(balanceData, [

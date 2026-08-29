@@ -263,6 +263,7 @@ export interface IDatabaseService {
   // Leave balance management
   getLeaveBalance(userId: string, year: number): Promise<LeaveBalance[]>
   updateLeaveBalance(balance: Omit<LeaveBalance, 'id' | 'updated_at'>): Promise<LeaveBalance>
+  ensureDefaultLeaveBalances(userId: string, year: number, policies: LeavePolicy[]): Promise<void>
   
   // Leave policy management
   getLeavePolicies(): Promise<LeavePolicy[]>
@@ -394,6 +395,10 @@ export class DatabaseService implements IDatabaseService {
 
   async updateLeaveBalance(balance: Omit<LeaveBalance, 'id' | 'updated_at'>) {
     return this.serviceFactory.getLeaveBalanceService().createLeaveBalance(balance);
+  }
+
+  async ensureDefaultLeaveBalances(userId: string, year: number, policies: LeavePolicy[]) {
+    return this.serviceFactory.getLeaveBalanceService().ensureDefaultBalances(userId, year, policies);
   }
 
   // Leave policy management

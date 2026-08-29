@@ -32,6 +32,8 @@ export async function GET() {
       companyId: session.user.companyId,
     })
     const year = new Date().getFullYear()
+    const policies = await databaseService.getLeavePolicies()
+    await databaseService.ensureDefaultLeaveBalances(session.user.id, year, policies)
     const balances = await databaseService.getLeaveBalance(session.user.id, year)
     return NextResponse.json(balances)
   } catch (error) {

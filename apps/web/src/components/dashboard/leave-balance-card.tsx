@@ -3,7 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Calendar, Clock, TrendingDown } from 'lucide-react'
-import type { LeaveBalance, LeaveType } from '@timeoff/types'
+import type { LeaveBalance } from '@timeoff/types'
+import { balancesForLeaveCard } from '@/lib/leave-balance-display'
 
 interface LeaveBalanceCardProps {
   leaveBalance?: LeaveBalance[] | null
@@ -34,41 +35,7 @@ export function LeaveBalanceCard({ leaveBalance, isLoading }: LeaveBalanceCardPr
     )
   }
 
-  const mockLeaveBalance: LeaveBalance[] = [
-    {
-      id: '1',
-      leave_type: 'vacation' as LeaveType,
-      total_allowance: 10,
-      used_days: 5,
-      carried_over: 0,
-      user_id: '1',
-      remaining_days: 5,
-      year: 2025,
-      updated_at: new Date()
-    },
-    {
-      id: '2',
-      leave_type: 'sick' as LeaveType,
-      total_allowance: 20,
-      used_days: 5,
-      carried_over: 0,
-      user_id: '1',
-      remaining_days: 5,
-      year: 2025,
-      updated_at: new Date()
-    },
-    {
-      id: '3',
-      leave_type: 'personal' as LeaveType,
-      total_allowance: 10,
-      used_days: 5,
-      carried_over: 0,
-      user_id: '1',
-      remaining_days: 5,
-      year: 2025,
-      updated_at: new Date()
-    }
-  ]
+  const cardBalances = balancesForLeaveCard(leaveBalance ?? [])
 
   // if (!leaveBalance || leaveBalance.length === 0) {
   //   return (
@@ -126,11 +93,10 @@ export function LeaveBalanceCard({ leaveBalance, isLoading }: LeaveBalanceCardPr
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {mockLeaveBalance.map((balance) => {
+          {cardBalances.map((balance) => {
             const percentage = balance.total_allowance > 0
               ? ((balance.used_days / balance.total_allowance) * 100)
               : 0
-            const remaining = balance.total_allowance - balance.used_days
 
             return (
               <div key={balance.id} className="space-y-3">
@@ -151,7 +117,7 @@ export function LeaveBalanceCard({ leaveBalance, isLoading }: LeaveBalanceCardPr
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-1 text-green-600">
                     <Clock className="h-4 w-4" />
-                    <span>{remaining} days remaining</span>
+                    <span>{balance.remaining_days} days remaining</span>
                   </div>
 
                   {balance.carried_over > 0 && (

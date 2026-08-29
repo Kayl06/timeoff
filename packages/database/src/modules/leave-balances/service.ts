@@ -1,6 +1,9 @@
 import { LeaveBalanceRepository } from './repository';
 import { LeaveBalance, CreateLeaveBalanceData, UpdateLeaveBalanceData, LeaveBalanceFilters, LeaveBalanceSummary } from './types';
 import { LeaveRequest } from '../leave-requests/types';
+import { LeavePolicy } from '../leave-policies/types';
+import { ServiceError } from '../shared/types';
+import { planDefaultBalanceInserts } from './plan-default-inserts';
 
 export class LeaveBalanceService {
   constructor(private leaveBalanceRepository: LeaveBalanceRepository) {}
@@ -23,6 +26,26 @@ export class LeaveBalanceService {
     };
 
     return this.leaveBalanceRepository.upsert(dataWithCalculations);
+  }
+
+  /**
+   * Insert-only self-heal for missing vacation/sick/personal rows (BAL-01, D-07).
+   * Duplicate unique (user_id, leave_type, year) is treated as success.
+   */
+  async ensureDefaultBalances(userId: string, year: number, policies: LeavePolicy[]): Promise<void> {
+    const existing = await this.leaveBalanceRepository.findByUserId(userId, year);
+    const planned = planDefaultBalanceInserts(existing, policies, userId, year);
+
+    for (const row of planned) {
+      try {
+        await this.leaveBalanceRepository.create(row);
+      } catch (error) {
+        if ((error as ServiceError).code === 'DUPLICATE_ENTRY') {
+          continue;
+        }
+        throw error;
+      }
+    }
   }
 
   async updateLeaveBalance(id: string, updates: UpdateLeaveBalanceData): Promise<LeaveBalance> {
