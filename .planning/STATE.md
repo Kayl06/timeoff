@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: executing
-stopped_at: Phase 2 plans revised (7 plans, 4 waves), ready to execute
-last_updated: "2026-08-29T13:13:46.798Z"
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-08-29T13:20:38.035Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 2 execution started
-state_head: f8f265bc6d1bb009f10604773fe93d3cfee7574d
+state_head: 72dc2199c4fbb04a82b5d6dd8e2eab985451ff23
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 9
+  completed_plans: 10
   percent: 14
 ---
 
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 2 (Tenant Isolation and Server Authz) — EXECUTING
-Plan: 1 of 7
-Status: Executing Phase 2
+Plan: 2 of 7
+Status: Ready to execute
 Last activity: 2026-08-29 — Phase 2 execution started
 
-Progress: [██░░░░░░░░] 14%
+Progress: [█░░░░░░░░░] 14%
 
 ## Performance Metrics
 
@@ -67,6 +67,7 @@ Progress: [██░░░░░░░░] 14%
 | Phase 01-company-signup-and-invites P07 | 2 min | 2 tasks | 4 files |
 | Phase 01-company-signup-and-invites P08 | 2 min | 2 tasks | 4 files |
 | Phase 01-company-signup-and-invites P09 | 3 min | 3 tasks | 9 files |
+| Phase 02-tenant-isolation-and-server-authz P01 | 4 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -102,6 +103,9 @@ Recent decisions affecting current work:
 - [Phase 01]: Credentials and Google join share accept_invite_with_employee; Google passes passwordHash null
 - [Phase 01]: Other-company Google and unique-violation 23505 redirect to ACCOUNT_EXISTS_PATH with Sign in, not InviteRequired
 - [Phase 01]: Same-company existing Google member still marks the invite accepted and returns true (no second users row)
+- [Phase 02]: Pin jose as exact 4.15.9 (not caret, not 6.x) as a direct @timeoff/web dependency
+- [Phase 02]: tenantSessionRejectStatus returns 401|null only; no owner 403
+- [Phase 02]: mintTenantAccessToken puts company_id as a top-level HS256 claim, not user_metadata
 
 ### Pending Todos
 
@@ -122,6 +126,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T12:20:00Z
-Stopped at: Phase 1 complete, ready to plan Phase 2
+Last session: 2026-08-29T13:20:37.853Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
