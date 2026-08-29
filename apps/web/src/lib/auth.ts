@@ -2,7 +2,8 @@ import { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-import { supabase, mapUserFromDatabase } from './supabase'
+import { mapUserFromDatabase } from './supabase'
+import { identitySupabase } from './service-role-supabase'
 import { UserRole } from '@timeoff/types'
 import { env, devLog } from './env'
 import { decideGoogleSignIn, ACCOUNT_EXISTS_PATH, INVITE_REQUIRED_PATH } from './google-signin-gate'
@@ -31,7 +32,7 @@ async function resolveIsOwner(userId: string, companyId: string | undefined): Pr
   if (!userId || !companyId) {
     return false
   }
-  const { data: company } = await supabase
+  const { data: company } = await identitySupabase
     .from('companies')
     .select('owner_id')
     .eq('id', companyId)
@@ -61,7 +62,7 @@ export const authOptions: NextAuthOptions = {
 
         try {
           // Check if user exists in our database
-          const { data: user, error } = await supabase
+          const { data: user, error } = await identitySupabase
             .from('users')
             .select('*')
             .eq('email', credentials.email)
@@ -111,7 +112,7 @@ export const authOptions: NextAuthOptions = {
 
       try {
         const email = user.email || ''
-        const { data: existingUser } = await supabase
+        const { data: existingUser } = await identitySupabase
           .from('users')
           .select('*')
           .eq('email', email)
@@ -138,7 +139,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           const tokenHash = hashInviteTokenHex(pendingValue)
-          const { data: invite, error: inviteError } = await supabase
+          const { data: invite, error: inviteError } = await identitySupabase
             .from('company_invites')
             .select('id, email, status, expires_at, company_id')
             .eq('token_hash', tokenHash)
@@ -160,7 +161,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           const companyId = companyIdFromInvite(inviteRow)
-          const { data: memberByInviteEmail } = await supabase
+          const { data: memberByInviteEmail } = await identitySupabase
             .from('users')
             .select('id, company_id')
             .eq('email', inviteRow.email)
@@ -174,7 +175,7 @@ export const authOptions: NextAuthOptions = {
               return ACCOUNT_EXISTS_PATH
             }
 
-            await supabase
+            await identitySupabase
               .from('company_invites')
               .update({
                 status: 'accepted',
@@ -188,7 +189,7 @@ export const authOptions: NextAuthOptions = {
 
           const firstName = user.name?.split(' ')[0] || ''
           const lastName = user.name?.split(' ').slice(1).join(' ') || ''
-          const { error: rpcError } = await supabase.rpc(
+          const { error: rpcError } = await identitySupabase.rpc(
             'accept_invite_with_employee',
             buildAcceptInviteWithEmployeeArgs({
               inviteId: inviteRow.id,
@@ -221,7 +222,7 @@ export const authOptions: NextAuthOptions = {
         if (pendingCompany && pendingValue) {
           const firstName = user.name?.split(' ')[0] || ''
           const lastName = user.name?.split(' ').slice(1).join(' ') || ''
-          const { error } = await supabase.rpc(
+          const { error } = await identitySupabase.rpc(
             'create_company_with_owner',
             buildCreateCompanyWithOwnerArgs({
               email,
@@ -251,7 +252,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user?.email) {
         try {
           // Get user data from our database
-          const { data: user } = await supabase
+          const { data: user } = await identitySupabase
             .from('users')
             .select('*')
             .eq('email', session.user.email)

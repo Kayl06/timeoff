@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { supabase, mapUserFromDatabase, testSupabaseConnection } from '@/lib/supabase'
+import { mapUserFromDatabase } from '@/lib/supabase'
+import { identitySupabase } from '@/lib/service-role-supabase'
 import { buildCreateCompanyWithOwnerArgs } from '@/lib/create-company-rpc'
 import { devLog } from '@/lib/env'
 import { userRegistrationSchema, validateInput, formatValidationErrors } from '@/lib/validation'
@@ -25,10 +26,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { companyName, firstName, lastName, email, password } = validationResult.data
-    const connectionTest = await testSupabaseConnection()
 
     // Check if user already exists
-    const { data: existingUser } = await supabase
+    const { data: existingUser } = await identitySupabase
       .from('users')
       .select('id')
       .eq('email', email)
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     const saltRounds = 12
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-    const { data: newUser, error: createError } = await supabase.rpc(
+    const { data: newUser, error: createError } = await identitySupabase.rpc(
       'create_company_with_owner',
       buildCreateCompanyWithOwnerArgs({
         email,
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       }
       devLog.error('Error creating company:', createError)
       return NextResponse.json(
-        { error: 'Failed to create user', details: createError.message, connectionTest: connectionTest },
+        { error: 'Failed to create user', details: createError.message },
         { status: 500 }
       )
     }
