@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { supabase, mapUserFromDatabase } from '@/lib/supabase'
+import { buildAcceptInviteWithEmployeeArgs } from '@/lib/accept-invite-rpc'
+import { EMAIL_EXISTS_ERROR } from '@/lib/invite-auth'
 import { devLog } from '@/lib/env'
 import { inviteAcceptSchema, validateInput, formatValidationErrors } from '@/lib/validation'
 import { hashInviteTokenHex } from '@/lib/invite-token'
 import { companyIdFromInvite, inviteIsUsable } from '@/lib/invite-accept'
 
 const INVALID_OR_EXPIRED = { error: 'invalid_or_expired' as const }
-const EMAIL_EXISTS_ERROR = 'An account with this email already exists. Sign in, or ask your admin for an invite.'
 
 type InviteRow = {
   id: string
@@ -69,38 +70,26 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    const { data: newUser, error: createError } = await supabase
-      .from('users')
-      .insert({
+    const { data: newUser, error: rpcError } = await supabase.rpc(
+      'accept_invite_with_employee',
+      buildAcceptInviteWithEmployeeArgs({
+        inviteId: inviteRow.id,
         email: inviteRow.email,
-        password: hashedPassword,
-        first_name: firstName,
-        last_name: lastName,
-        company_id: companyId,
-        role: 'employee',
-        department: 'Unassigned',
-        team: 'Unassigned',
+        passwordHash: hashedPassword,
+        firstName,
+        lastName,
+        companyId,
       })
-      .select()
-      .single()
+    )
 
-    if (createError) {
-      if (createError.code === '23505') {
+    if (rpcError) {
+      if (rpcError.code === '23505' || rpcError.message?.includes('unique_violation')) {
         return NextResponse.json({ error: EMAIL_EXISTS_ERROR }, { status: 409 })
       }
-      throw createError
-    }
-
-    const { error: acceptError } = await supabase
-      .from('company_invites')
-      .update({
-        status: 'accepted',
-        accepted_at: new Date().toISOString(),
-      })
-      .eq('id', inviteRow.id)
-
-    if (acceptError) {
-      throw acceptError
+      if (rpcError.message?.includes('invite_not_pending')) {
+        return NextResponse.json(INVALID_OR_EXPIRED, { status: 404 })
+      }
+      throw rpcError
     }
 
     const mappedUser = mapUserFromDatabase(newUser)
