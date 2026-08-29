@@ -70,32 +70,12 @@ function validateEnvironment(): EnvironmentConfig {
     }
   }
 
-  // Throw error if any required variables are missing
-//   if (missingVars.length > 0) {
-//     const isDocker = process.env.DOCKER_ENV || process.env.HOSTNAME?.includes('docker') || process.env.CONTAINER_NAME
-    
-//     const errorMessage = `
-// 🚨 Missing Required Environment Variables:
-
-// The following environment variables are required but not set:
-// ${missingVars.map(v => `  - ${v}`).join('\n')}
-
-// ${isDocker ? `
-// For Docker development:
-// 1. Create a .env file in the project root with these variables
-// 2. Restart your Docker containers: docker-compose -f docker-compose.dev.yml down && docker-compose -f docker-compose.dev.yml up
-
-// Current environment debug:
-// ${Object.keys(process.env).filter(k => k.includes('SUPABASE') || k.includes('NEXTAUTH') || k.includes('GOOGLE')).map(k => `  ${k}=${process.env[k] ? 'SET' : 'NOT SET'}`).join('\n')}
-// ` : `
-// For local development:
-// Please create a .env.local file in the apps/web directory with these variables.
-// See the README.md for setup instructions. 
-// `}
-//     `.trim()
-    
-//     throw new Error(errorMessage)
-//   }
+  // Throw error if any required variables are missing (names only — never values)
+  if (missingVars.length > 0) {
+    throw new Error(
+      `Missing required environment variables: ${missingVars.join(', ')}`
+    )
+  }
 
   return config as EnvironmentConfig
 }
