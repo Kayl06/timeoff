@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 1
 current_phase_name: Company Signup and Invites
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-08-29T08:29:12.576Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-08-29T09:15:25.557Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 1 execution started
-state_head: c1794f5af44e953f5707ce265dadbbaba6f56d50
+state_head: 9c26bc5db75cbe308b0b6fa6d37a3baffb62e044
 progress:
   total_phases: 7
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 1 (Company Signup and Invites) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 1 execution started
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 01-company-signup-and-invites P01 | 2 min | 3 tasks | 7 files |
+| Phase 01 P02 | 17 min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -73,6 +74,8 @@ Recent decisions affecting current work:
 - Skip stub `/(admin)/users`; onboarding is first-user signup + invites
 - [Phase 01]: Did not set apps/web package.json type:module so Next CJS configs stay valid; Node 26 re-parses TS tests as ESM
 - [Phase 01]: hashInviteTokenHex is the only persistence/lookup form for company_invites.token_hash (64 lowercase hex)
+- [Phase 01]: option-a: companies.owner_id + users.company_id NOT NULL + create_company_with_owner
+- [Phase 01]: Applied companies schema to local Supabase; hosted project still needs database password to link and push
 
 ### Pending Todos
 
@@ -93,6 +96,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T08:29:12.566Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-08-29T09:15:25.546Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
