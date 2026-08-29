@@ -96,16 +96,18 @@ export function useDashboardData(user: User): DashboardDataReturn {
   // Create leave request mutation
   const { mutateAsync: createLeaveRequest, isPending: isCreatingLeaveRequest } = useMutation({
     mutationFn: async (data: Omit<DatabaseLeaveRequest, 'id' | 'created_at' | 'updated_at'>) => {
-      const newRequest = await databaseService.createLeaveRequest(data)
-
-      // Auto-approve for managers if enabled (configurable)
-      if (isManager && data.status === 'pending') {
-        // Optional: Add a setting to control auto-approval for managers
-        // For now, we'll auto-approve manager's own requests
-        await databaseService.approveLeaveRequest(newRequest.id, user.id, 'Auto-approved (Manager self-leave)')
+      const { user_id: _ignored, ...body } = data
+      const response = await fetch('/api/leave-requests', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to create leave request')
       }
-
-      return newRequest
+      return payload as DatabaseLeaveRequest
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leaveBalance', user.id] })

@@ -146,6 +146,35 @@ export const leaveRequestSchema = z.object({
   }
 )
 
+/** JSON body for POST /api/leave-requests. Actor ids are never taken from the client. */
+export const leaveRequestCreateBodySchema = z.object({
+  leave_type: z.enum(['vacation', 'sick', 'personal', 'maternity', 'paternity', 'bereavement', 'unpaid', 'other']),
+  start_date: z.coerce.date(),
+  end_date: z.coerce.date(),
+  is_half_day: z.boolean().default(false),
+  half_day_type: z.enum(['morning', 'afternoon']).optional(),
+  reason: z.string().optional(),
+  attachments: z.array(z.string()).optional(),
+  status: z.enum(['draft', 'pending', 'approved', 'rejected', 'cancelled']).optional(),
+}).refine(
+  (data) => data.end_date >= data.start_date,
+  {
+    message: "End date must be after start date",
+    path: ["end_date"]
+  }
+).refine(
+  (data) => {
+    if (data.is_half_day && !data.half_day_type) {
+      return false
+    }
+    return true
+  },
+  {
+    message: "Half day type is required when selecting half day",
+    path: ["half_day_type"]
+  }
+)
+
 // Password reset validation
 export const passwordResetSchema = z.object({
   email: emailSchema
@@ -202,6 +231,7 @@ export type InviteEmailInput = z.infer<typeof inviteEmailSchema>
 export type InviteAcceptInput = z.infer<typeof inviteAcceptSchema>
 export type PendingContextInput = z.infer<typeof pendingContextSchema>
 export type LeaveRequestInput = z.infer<typeof leaveRequestSchema>
+export type LeaveRequestCreateBodyInput = z.infer<typeof leaveRequestCreateBodySchema>
 export type PasswordResetInput = z.infer<typeof passwordResetSchema>
 export type PasswordResetConfirmInput = z.infer<typeof passwordResetConfirmSchema>
 export type UserProfileUpdateInput = z.infer<typeof userProfileUpdateSchema>
