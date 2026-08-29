@@ -13,11 +13,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Home, Palette, LogOut, User, Settings, Calendar } from 'lucide-react'
+import { Home, Palette, LogOut, User, Settings, Calendar, Mail } from 'lucide-react'
+import { useState } from 'react'
+import { InviteTeammatesDialog } from '@/components/invite-teammates-dialog'
 
 export function Navigation() {
   const pathname = usePathname()
   const { data: session, status } = useSession()
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false)
 
   // Don't show navigation on auth pages
   if (pathname.startsWith('/auth')) {
@@ -100,6 +103,12 @@ export function Navigation() {
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                   </DropdownMenuItem>
+                  {session.user.isOwner && (
+                    <DropdownMenuItem onSelect={() => setInviteDialogOpen(true)}>
+                      <Mail className="mr-2 h-4 w-4" />
+                      <span>Invite teammates</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/auth/signin' })}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -107,6 +116,12 @@ export function Navigation() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              {session.user.isOwner && (
+                <InviteTeammatesDialog
+                  open={inviteDialogOpen}
+                  onOpenChange={setInviteDialogOpen}
+                />
+              )}
             </div>
           )}
 
