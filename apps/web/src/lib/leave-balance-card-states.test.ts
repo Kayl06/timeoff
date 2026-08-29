@@ -46,3 +46,28 @@ describe('Leave Balance card empty and fetch-error states', () => {
     assert.match(hook, /\/api\/leave-balances/)
   })
 })
+
+describe('Leave Balance card type order and extra types', () => {
+  it('maps populated rows through balancesForLeaveCard, not the raw prop', () => {
+    const card = liveSource('../components/dashboard/leave-balance-card.tsx')
+
+    assert.match(card, /import \{ balancesForLeaveCard \} from '@\/lib\/leave-balance-display'/)
+    assert.match(card, /balancesForLeaveCard\(leaveBalance/)
+    assert.match(card, /cardBalances\.map\(/)
+    assert.doesNotMatch(card, /leaveBalance\.map\(/)
+  })
+
+  it('shows empty copy when only extra types remain after filtering', () => {
+    const card = liveSource('../components/dashboard/leave-balance-card.tsx')
+
+    assert.match(card, /if\s*\(\s*cardBalances\.length\s*===\s*0\s*\)/)
+  })
+
+  it('does not iterate a maternity-capable extra type list for populated rows', () => {
+    const card = liveSource('../components/dashboard/leave-balance-card.tsx')
+    const mapIdx = card.indexOf('cardBalances.map')
+    assert.ok(mapIdx >= 0, 'populated map uses cardBalances')
+    const populated = card.slice(mapIdx)
+    assert.doesNotMatch(populated, /\[.vacation., .sick., .personal., .maternity/)
+  })
+})
