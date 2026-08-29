@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/lib/auth'
-import { supabase } from '@/lib/supabase'
+import { identitySupabase } from '@/lib/service-role-supabase'
 import { env, devLog } from '@/lib/env'
 import { inviteEmailSchema, validateInput, formatValidationErrors } from '@/lib/validation'
 import { generateInviteToken, hashInviteTokenHex } from '@/lib/invite-token'
@@ -30,7 +30,7 @@ async function requireInviteOwner(): Promise<
 
   let company: CompanyRow | null = null
 
-  const byOwner = await supabase
+  const byOwner = await identitySupabase
     .from('companies')
     .select('id, name, owner_id')
     .eq('owner_id', sessionUserId)
@@ -39,7 +39,7 @@ async function requireInviteOwner(): Promise<
   if (byOwner.data) {
     company = byOwner.data as CompanyRow
   } else if (session.user.companyId) {
-    const byId = await supabase
+    const byId = await identitySupabase
       .from('companies')
       .select('id, name, owner_id')
       .eq('id', session.user.companyId)
@@ -75,7 +75,7 @@ export async function GET() {
 
     const { company } = gate
 
-    const { data: inviteRows, error: inviteError } = await supabase
+    const { data: inviteRows, error: inviteError } = await identitySupabase
       .from('company_invites')
       .select('email, created_at, expires_at')
       .eq('company_id', company.id)
@@ -86,7 +86,7 @@ export async function GET() {
       throw inviteError
     }
 
-    const { count: teammateCount, error: countError } = await supabase
+    const { count: teammateCount, error: countError } = await identitySupabase
       .from('users')
       .select('id', { count: 'exact', head: true })
       .eq('company_id', company.id)
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
 
     const { email } = validationResult.data
 
-    const { data: existingUser, error: userLookupError } = await supabase
+    const { data: existingUser, error: userLookupError } = await identitySupabase
       .from('users')
       .select('id, company_id')
       .eq('email', email)
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
       throw userLookupError
     }
 
-    const { data: existingInvite, error: inviteLookupError } = await supabase
+    const { data: existingInvite, error: inviteLookupError } = await identitySupabase
       .from('company_invites')
       .select('id')
       .eq('email', email)
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
     const tokenHash = hashInviteTokenHex(rawToken)
     const expiresAt = new Date(Date.now() + INVITE_TTL_MS)
 
-    const { data: invite, error: insertError } = await supabase
+    const { data: invite, error: insertError } = await identitySupabase
       .from('company_invites')
       .insert({
         company_id: company.id,

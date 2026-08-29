@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { supabase, mapUserFromDatabase } from '@/lib/supabase'
+import { mapUserFromDatabase } from '@/lib/supabase'
+import { identitySupabase } from '@/lib/service-role-supabase'
 import { buildAcceptInviteWithEmployeeArgs } from '@/lib/accept-invite-rpc'
 import { EMAIL_EXISTS_ERROR } from '@/lib/invite-auth'
 import { devLog } from '@/lib/env'
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     const { token, firstName, lastName, password } = validationResult.data
     const tokenHash = hashInviteTokenHex(token)
 
-    const { data: invite, error: inviteError } = await supabase
+    const { data: invite, error: inviteError } = await identitySupabase
       .from('company_invites')
       .select('id, email, status, expires_at, company_id')
       .eq('token_hash', tokenHash)
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
     const inviteRow = invite as InviteRow
     const companyId = companyIdFromInvite(inviteRow)
 
-    const { data: existingUser, error: userLookupError } = await supabase
+    const { data: existingUser, error: userLookupError } = await identitySupabase
       .from('users')
       .select('id')
       .eq('email', inviteRow.email)
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 12)
 
-    const { data: newUser, error: rpcError } = await supabase.rpc(
+    const { data: newUser, error: rpcError } = await identitySupabase.rpc(
       'accept_invite_with_employee',
       buildAcceptInviteWithEmployeeArgs({
         inviteId: inviteRow.id,

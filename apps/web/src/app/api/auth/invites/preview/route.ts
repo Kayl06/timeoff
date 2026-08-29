@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { identitySupabase } from '@/lib/service-role-supabase'
 import { devLog } from '@/lib/env'
 import { hashInviteTokenHex } from '@/lib/invite-token'
 import { inviteIsUsable } from '@/lib/invite-accept'
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     }
 
     const tokenHash = hashInviteTokenHex(token)
-    const { data: invite, error } = await supabase
+    const { data: invite, error } = await identitySupabase
       .from('company_invites')
       .select('email, status, expires_at, companies(name)')
       .eq('token_hash', tokenHash)
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     }
 
     const inviteEmail = (invite as InvitePreviewRow).email
-    const { data: existingUser, error: userLookupError } = await supabase
+    const { data: existingUser, error: userLookupError } = await identitySupabase
       .from('users')
       .select('id')
       .eq('email', inviteEmail)
