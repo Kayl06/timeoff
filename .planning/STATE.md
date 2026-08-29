@@ -3,16 +3,16 @@ gsd_state_version: 1.0
 current_phase: 2
 current_phase_name: Tenant Isolation and Server Authz
 status: executing
-stopped_at: Completed 02-02-PLAN.md
-last_updated: "2026-08-29T13:27:05.371Z"
+stopped_at: Completed 02-03-PLAN.md
+last_updated: "2026-08-29T13:30:39.143Z"
 last_activity: 2026-08-29
 last_activity_desc: Phase 2 execution started
-state_head: 424af38ef13af6243c79fa65c225597175ab8265
+state_head: b818b05a7b896dddc593e81c11c05ef5d7bec01c
 progress:
   total_phases: 7
   completed_phases: 1
   total_plans: 16
-  completed_plans: 11
+  completed_plans: 12
   percent: 14
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-08-29)
 ## Current Position
 
 Phase: 2 (Tenant Isolation and Server Authz) — EXECUTING
-Plan: 3 of 7
+Plan: 4 of 7
 Status: Ready to execute
 Last activity: 2026-08-29 — Phase 2 execution started
 
@@ -69,6 +69,7 @@ Progress: [█░░░░░░░░░] 14%
 | Phase 01-company-signup-and-invites P09 | 3 min | 3 tasks | 9 files |
 | Phase 02-tenant-isolation-and-server-authz P01 | 4 min | 3 tasks | 7 files |
 | Phase 02-tenant-isolation-and-server-authz P02 | 4 min | 3 tasks | 8 files |
+| Phase 02-tenant-isolation-and-server-authz P03 | 2 min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,9 @@ Recent decisions affecting current work:
 - [Phase 2]: Always insert leave_requests as pending; ignore body status so an employee cannot self-approve
 - [Phase 2]: Compute total_days on the server from dates and is_half_day; do not trust client total_days
 - [Phase 2]: DatabaseService constructor uses Factory.create for every createDatabaseService caller, including the browser provider until 02-04
+- [Phase 02-tenant-isolation-and-server-authz]: PATCH approve/reject bind approver_id via bindLeaveApprover from session.user.id; cancel/delete have no actor field on IDatabaseService
+- [Phase 02-tenant-isolation-and-server-authz]: Bulk POST builds status and approved_at/rejected_at on the server, then bindLeaveApprover before bulkUpdateLeaveRequests
+- [Phase 02-tenant-isolation-and-server-authz]: Operations hook keeps userId only for query-key invalidation; JSON body has action/comments/reason/ids only
 
 ### Pending Todos
 
@@ -130,6 +134,6 @@ Items acknowledged and deferred at milestone close, most recent first:
 
 ## Session Continuity
 
-Last session: 2026-08-29T13:27:05.206Z
-Stopped at: Completed 02-02-PLAN.md
+Last session: 2026-08-29T13:30:38.998Z
+Stopped at: Completed 02-03-PLAN.md
 Resume file: None
