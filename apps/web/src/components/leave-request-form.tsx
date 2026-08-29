@@ -21,7 +21,7 @@ import { useQuery } from '@tanstack/react-query'
 import { leaveRequestSchema, type LeaveRequestInput } from '@/lib/validation'
 
 interface LeaveRequestFormProps {
-  onSubmit: (data: LeaveRequestInput) => void
+  onSubmit: (data: LeaveRequestInput) => void | Promise<void>
   isLoading?: boolean
 }
 
@@ -40,14 +40,22 @@ export function LeaveRequestForm({ onSubmit, isLoading = false }: LeaveRequestFo
   const watchedStartDate = form.watch('start_date')
   const watchedIsHalfDay = form.watch('is_half_day')
 
-  const handleSubmit = (data: LeaveRequestInput) => {
-    onSubmit(data)
-    toast({
-      title: 'Leave Request Submitted',
-      description: 'Your leave request has been submitted successfully.',
-    })
-    setIsOpen(false)
-    form.reset()
+  const handleSubmit = async (data: LeaveRequestInput) => {
+    try {
+      await onSubmit(data)
+      toast({
+        title: 'Leave Request Submitted',
+        description: 'Your leave request has been submitted successfully.',
+      })
+      setIsOpen(false)
+      form.reset()
+    } catch {
+      toast({
+        title: 'Leave Request Failed',
+        description: 'Could not submit your leave request. Please try again.',
+        variant: 'destructive',
+      })
+    }
   }
 
   const { data: leavePolicies, isLoading: isLoadingLeavePolicies } = useQuery({
