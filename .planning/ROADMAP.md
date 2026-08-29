@@ -85,7 +85,26 @@ Plans:
   2. Requesting, approving, or updating leave as a signed-in user still works; those writes are bound to the signed-in session, not the browser anon key
   3. Someone holding only the public API key, without a valid tenant session, cannot read or write leave, user, or notification data
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Wave 0 session/bind/JWT unit tests + jose@4.15.9
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — Session-gated create-leave tracer (BFF + request-scoped tenant client)
+
+**Wave 3** *(blocked on Wave 2; 02-03, 02-04, and 02-05 parallel)*
+
+- [ ] 02-03-PLAN.md — Session-gated approve/reject/cancel/delete/bulk
+- [ ] 02-04-PLAN.md — Session-gated dashboard/calendar reads + stop browser domain client
+- [ ] 02-05-PLAN.md — Service-role identity client + close test-connection listing
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 02-06-PLAN.md — Tenant RLS + anon REVOKE + local schema push + pgTAP
 
 ### Phase 3: Live Remaining Days
 
@@ -171,7 +190,7 @@ Phase 6 depends only on Phase 2 (authz + tenant exist; remaining-days and leave 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Company Signup and Invites | 9/9 | Complete    | 2026-08-29 |
-| 2. Tenant Isolation and Server Authz | 0/TBD | Not started | - |
+| 2. Tenant Isolation and Server Authz | 0/6 | Not started | - |
 | 3. Live Remaining Days | 0/TBD | Not started | - |
 | 4. Approve Reject Cancel Side Effects | 0/TBD | Not started | - |
 | 5. Bulk Approve Parity | 0/TBD | Not started | - |
