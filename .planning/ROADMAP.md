@@ -149,7 +149,21 @@ Plans:
   3. Approve, reject, cancel, and delete each write a durable audit row with the real actor’s user id (no `user_id: 'system'` FK failures)
   4. The employee sees an in-app notification and receives an email when their request is approved or rejected
 
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+**Wave 1**
+
+- [ ] 04-01-PLAN.md — Wave 0 deduct/restore/year/notification-type helpers
+- [ ] 04-02-PLAN.md — Resend adapter + legitimacy pin + COVERAGE
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 04-03-PLAN.md — PATCH approve tracer (deduct + audit + in-app + mail)
+
+**Wave 3** *(blocked on 04-03)*
+
+- [ ] 04-04-PLAN.md — Reject/cancel/delete restore + actor audit + invalidation
+
 **UI hint**: yes
 
 ### Phase 5: Bulk Approve Parity
@@ -208,7 +222,7 @@ Phase 6 depends only on Phase 2 (authz + tenant exist; remaining-days and leave 
 | 1. Company Signup and Invites | 9/9 | Complete    | 2026-08-29 |
 | 2. Tenant Isolation and Server Authz | 7/7 | In Progress|  |
 | 3. Live Remaining Days | 4/4 | In Progress|  |
-| 4. Approve Reject Cancel Side Effects | 0/TBD | Not started | - |
+| 4. Approve Reject Cancel Side Effects | 0/4 | Not started | - |
 | 5. Bulk Approve Parity | 0/TBD | Not started | - |
 | 6. Honest Password Reset and Sign-in | 0/TBD | Not started | - |
 | 7. Calendar and Dashboard Agreement | 0/TBD | Not started | - |
