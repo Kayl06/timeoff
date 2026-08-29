@@ -191,6 +191,7 @@ SELECT throws_ok(
       'pending'
     )$$,
   '42501',
+  'permission denied for table leave_requests',
   'anon INSERT leave_requests is denied'
 );
 
@@ -210,6 +211,7 @@ SELECT throws_ok(
       'a0000000-0000-4000-8000-00000000000a'
     )$$,
   '42501',
+  'permission denied for table users',
   'anon INSERT users is denied'
 );
 
@@ -227,6 +229,7 @@ SELECT throws_ok(
       'request_pending'
     )$$,
   '42501',
+  'permission denied for table notifications',
   'anon INSERT notifications is denied'
 );
 
@@ -276,6 +279,12 @@ SELECT is(
 );
 
 SELECT is(
+  (SELECT count(*)::int FROM calendar_events WHERE id = 'c0000000-0000-4000-8000-0000000000c4'),
+  1,
+  'A JWT can SELECT calendar_events with null user_id'
+);
+
+SELECT is(
   (SELECT count(*)::int FROM companies WHERE id = 'b0000000-0000-4000-8000-00000000000b'),
   0,
   'A JWT cannot SELECT company B companies'
@@ -319,6 +328,7 @@ SELECT throws_ok(
       'pending'
     )$$,
   '42501',
+  'new row violates row-level security policy for table "leave_requests"',
   'A JWT INSERT leave_requests with company B user_id is denied'
 );
 
@@ -331,6 +341,7 @@ SELECT throws_ok(
       'request_pending'
     )$$,
   '42501',
+  'new row violates row-level security policy for table "notifications"',
   'A JWT INSERT notifications with company B user_id is denied'
 );
 
