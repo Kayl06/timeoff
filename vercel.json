@@ -1,8 +1,5 @@
 {
-  "buildCommand": "npm install && npx turbo run build --filter=@timeoff/web...",
-  "functions": {
-    "apps/web/src/app/api/**/*.ts": {
-      "maxDuration": 30
-    }
-  }
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "buildCommand": "npx turbo run build --filter=@timeoff/web"
 }

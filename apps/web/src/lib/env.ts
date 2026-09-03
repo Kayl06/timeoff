@@ -42,8 +42,8 @@ function validateEnvironment(): EnvironmentConfig {
     'SUPABASE_SERVICE_ROLE_KEY',
   ] as const
 
-  // Required in production, optional in development
-  const productionRequiredVars = [
+  // Optional in every environment — credentials signup/sign-in work without Google.
+  const optionalOauthVars = [
     'GOOGLE_CLIENT_ID',
     'GOOGLE_CLIENT_SECRET'
   ] as const
@@ -67,13 +67,10 @@ function validateEnvironment(): EnvironmentConfig {
     }
   }
 
-  // Check production-required variables (optional in development)
-  for (const varName of productionRequiredVars) {
+  for (const varName of optionalOauthVars) {
     const value = process.env[varName]
     if (value && value.trim() !== '') {
       config[varName] = value
-    } else if (config.NODE_ENV === 'production') {
-      missingVars.push(varName)
     }
   }
 

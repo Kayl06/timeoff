@@ -8,8 +8,8 @@ const nextConfig = {
   images: {
     domains: ['lh3.googleusercontent.com', 'avatars.githubusercontent.com'],
   },
-  // Enable standalone output for Docker
-  output: 'standalone',
+  // Standalone is for Docker. Vercel sets VERCEL=1 and needs the default serverless output.
+  ...(process.env.VERCEL ? {} : { output: 'standalone' }),
   // Add experimental features to handle SSR better
   experimental: {
     serverComponentsExternalPackages: ['@tanstack/react-query'],
